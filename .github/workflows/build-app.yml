@@ -1,0 +1,88 @@
+# 自用构建：在 GitHub 的 macOS 机器上编译出可直接安装的 App，打成 zip 供下载。
+#
+# 没有 Developer ID 证书，所以用 ad-hoc 签名：第一次打开要在「系统设置 → 隐私与安全性」
+# 里点「仍要打开」，并重新授予辅助功能权限。只供自己使用，不对外分发。
+#
+# 触发：推送到 master，或在 Actions 页面手动点 Run workflow。
+name: Build App
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: build-app-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build universal app (ad-hoc signed)
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select newest Xcode 26
+        run: |
+          XCODE="$(ls -d /Applications/Xcode_26*.app | sort -V | tail -n 1)"
+          echo "Using $XCODE"
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+
+      - name: Build Release
+        run: |
+          set -o pipefail
+          mkdir -p build
+          xcodebuild build \
+            -project macos-dock-cc-v2.xcodeproj \
+            -scheme macos-dock-cc-v2 \
+            -configuration Release \
+            -derivedDataPath build/DD \
+            ARCHS="x86_64 arm64" ONLY_ACTIVE_ARCH=NO \
+            CLANG_COVERAGE_MAPPING=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tee build/xcodebuild-build.log | grep -E 'error:|\*\* BUILD' || true
+          grep -q '\*\* BUILD SUCCEEDED \*\*' build/xcodebuild-build.log
+
+      - name: Package and ad-hoc sign
+        run: |
+          set -euo pipefail
+          source Scripts/lib/release_binary.sh
+          STAGE="build/stage"
+          APP="$STAGE/Tungsten Edge.app"
+          rm -rf "$STAGE" && mkdir -p "$STAGE"
+          cp -R "build/DD/Build/Products/Release/macos-dock-cc-v2.app" "$APP"
+          cp LICENSE "$APP/Contents/Resources/LICENSE"
+          strip_release_binary "$APP/Contents/MacOS/macos-dock-cc-v2"
+
+          SPARKLE="$APP/Contents/Frameworks/Sparkle.framework"
+          if [[ -d "$SPARKLE" ]]; then
+            rm -rf "$SPARKLE/Versions/B/XPCServices"
+            for nested in "$SPARKLE/Versions/B/Updater.app" "$SPARKLE/Versions/B/Autoupdate"; do
+              [[ -e "$nested" ]] && codesign --force --sign - "$nested"
+            done
+            codesign --force --sign - "$SPARKLE"
+          fi
+          codesign --force --sign - --entitlements Resources/TungstenEdge.entitlements "$APP"
+          codesign --verify --strict --verbose=2 "$APP"
+          lipo -archs "$APP/Contents/MacOS/macos-dock-cc-v2"
+
+          (cd "$STAGE" && ditto -c -k --sequesterRsrc --keepParent "Tungsten Edge.app" ../TungstenEdge-personal.zip)
+          ls -lh build/TungstenEdge-personal.zip
+
+      - name: Upload app
+        uses: actions/upload-artifact@v4
+        with:
+          name: TungstenEdge-personal-${{ github.run_number }}
+          path: build/TungstenEdge-personal.zip
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Upload build log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-build-log
+          path: build/xcodebuild-build.log
+          if-no-files-found: ignore
