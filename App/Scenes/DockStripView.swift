@@ -1109,7 +1109,8 @@ struct DockStripView: View {
                                 let payload = DragPayload(source: .strip, id: item.id,
                                                           bundleID: item.bundleIdentifier ?? "",
                                                           item: item, visualKind: .stripChip,
-                                                          canExternalDrop: DragController.canStash(item))
+                                                          canExternalDrop: DragController.canStash(item)
+                                                              && !drawerStore.contains(item.bundleIdentifier ?? ""))
                                 dragController.beginDrag(payload: payload, stripSurfaceID: stripSurfaceID,
                                                          startScreenLocation: NSEvent.mouseLocation,
                                                          grabOffset: grab,

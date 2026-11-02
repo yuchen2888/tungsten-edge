@@ -30,7 +30,7 @@ final class BadgeStore: ObservableObject {
     private var cacheCapturedAt: TimeInterval = 0
     private var pathToBundleID: [String: String] = [:]
     private var rewalkRequested = false
-    /// 可读集 = 消息应用身份 ∩ 在跑 − 抽屉（`AppMembershipProjection.badgeEligibleIDs`，AppDelegate 推进来）。
+    /// 可读集 = 消息应用身份 ∩ 在跑（`AppMembershipProjection.badgeEligibleIDs`，AppDelegate 推进来）。
     private var readableMessagingIDs: [String] = []
     private var taskbarVisible = true
     private let logger = Logger(subsystem: "com.caye.macosdockcc.v2", category: "Badge")

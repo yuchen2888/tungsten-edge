@@ -134,17 +134,15 @@ enum AppMembershipProjection {
         return filteredUnique(messagingIDs, excluding: Set(drawerIDs)).filter { retained.contains($0) }
     }
 
-    /// 角标读取范围（2026-08-23 起与消息区解绑）：**身份** ∩ 在跑 − 抽屉。
-    /// 抽屉里的图标不画角标，条上也没有它的卡，读了也没处画，所以剔掉省一趟 AX。
+    /// 角标读取范围（2026-08-23 起与消息区解绑）：**身份** ∩ 在跑。
+    /// 抽屉里的应用在跑时窗口卡照常上主栏，红点画在那张卡上，所以不再剔除抽屉成员。
     /// 输出按字典序，让 `BadgeStore` 的「变了才重走」比较稳定。
     static func badgeEligibleIDs(
         isMessagingApp: (String) -> Bool,
-        drawerIDs: [String],
         runningIDs: Set<String>
     ) -> [String] {
-        let drawer = Set(drawerIDs)
-        return runningIDs
-            .filter { !$0.isEmpty && !drawer.contains($0) && isMessagingApp($0) }
+        runningIDs
+            .filter { !$0.isEmpty && isMessagingApp($0) }
             .sorted()
     }
 

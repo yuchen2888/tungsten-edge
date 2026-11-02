@@ -80,23 +80,21 @@ final class AppMembershipProjectionTests: XCTestCase {
     }
 
 
-    // MARK: - badgeEligibleIDs = 身份 ∩ 在跑 − 抽屉（2026-08-23 角标与消息区解绑）
+    // MARK: - badgeEligibleIDs = 身份 ∩ 在跑（抽屉应用在跑时窗口卡也在主栏，照样有角标）
 
     func testBadgeEligibleIDsUsesIdentityNotZone() {
         let identity: Set<String> = ["com.apple.MobileSMS", "com.tencent.xinWeChat", "com.slack"]
         let result = AppMembershipProjection.badgeEligibleIDs(
             isMessagingApp: { identity.contains($0) },
-            drawerIDs: ["com.slack"],                      // 抽屉里的不读
             runningIDs: ["com.apple.MobileSMS", "com.slack", "com.apple.Safari", "com.tencent.xinWeChat"]
         )
         // 信息从没进过消息区，但它是消息应用且在跑 → 有角标资格；Safari 不是消息应用。
-        XCTAssertEqual(result, ["com.apple.MobileSMS", "com.tencent.xinWeChat"])
+        XCTAssertEqual(result, ["com.apple.MobileSMS", "com.slack", "com.tencent.xinWeChat"])
     }
 
     func testBadgeEligibleIDsIsEmptyWhenNothingRuns() {
         let result = AppMembershipProjection.badgeEligibleIDs(
             isMessagingApp: { _ in true },
-            drawerIDs: [],
             runningIDs: []
         )
         XCTAssertTrue(result.isEmpty, "没有消息应用在跑 → 空集 → BadgeStore 停轮询")

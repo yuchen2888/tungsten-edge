@@ -8,8 +8,9 @@ import UniformTypeIdentifiers
 extension DockStripView {
     /// Pinned messaging zone (leftmost, in store order) + live window zone, in **natural**
     /// snapshot order. Messaging apps show only while running (quit → chip gone; the future
-    /// drawer 待启动区 takes over the not-running role). Drawer membership hides a messaging
-    /// app from the strip without clearing its messaging flag.
+    /// drawer 待启动区 takes over the not-running role). Drawer membership keeps a messaging
+    /// app out of the messaging zone without clearing its messaging flag; while it runs, its
+    /// windows still show in the live zone like any other drawer app's.
     ///
     /// 方案 B: each messaging app pins exactly ONE app-level chip. Its main window
     /// (title matches the app name) is absorbed into that chip; pop-out windows
@@ -51,9 +52,11 @@ extension DockStripView {
         let showsFinderEntry = FinderTaskbarPolicy.showsAppLevelEntry(
             isKept: keptAppStore.contains(FinderTaskbarPolicy.bundleID)
         )
+        // 抽屉只管「没在运行时的启动入口」：抽屉里的应用一旦在跑，它的窗口卡（以及没有窗口时的
+        // 应用级兜底卡）照常出现在主栏，跟没收进抽屉的应用一样能点击切换、最小化、右键关闭。
+        // 不在跑的抽屉应用仍然只在抽屉里——下面的保留占位继续跳过抽屉成员。
         let items = snapshotItems.filter { item in
             let bid = item.bundleIdentifier ?? ""
-            if drawerStore.contains(bid) { return false }
             if item.isAppLevelFallback, FinderTaskbarPolicy.isFinder(bid), !showsFinderEntry { return false }
             return true
         }

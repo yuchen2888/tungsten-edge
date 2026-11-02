@@ -29,7 +29,6 @@ final class StripProjectionRegistry {
     }
 
     static func exclusion(token: String, cgID: UInt32, bundleID: String?, in projection: StripProjection) -> String {
-        if let bundleID, projection.drawerBundleIDs.contains(bundleID) { return "hiddenInDrawer" }
         if projection.messagingAbsorbedIDs.contains(token) { return "messagingAbsorbed" }
         if projection.trashAbsorbedIDs.contains(WindowID(rawValue: "cgw-\(cgID)")) { return "trashAbsorbed" }
         if projection.otherDisplayIDs.contains(token) { return "otherDisplay" }
