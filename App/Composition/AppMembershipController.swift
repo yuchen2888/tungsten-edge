@@ -134,6 +134,42 @@ enum AppMembershipProjection {
         return filteredUnique(messagingIDs, excluding: Set(drawerIDs)).filter { retained.contains($0) }
     }
 
+    // MARK: - 自用改版：抽屉只管「没在运行时的启动入口」
+    //
+    // 抽屉里的应用一旦在跑，窗口卡照常上主栏（能点击切换、最小化、右键关闭）；不在跑时只留在抽屉里。
+    // 这三条规则由 `AppMembershipProjectionTests` 的「抽屉应用上主栏」一节锁住——同步上游后若测试变红，
+    // 说明上游改动又把抽屉应用藏回去了，要重新对齐这里的语义，而不是改测试。
+
+    /// 快照里的一张卡能否进主栏常规区。**抽屉成员身份不参与判断**（`isDrawerMember` 只为让规则写在明面上）。
+    /// 唯一的例外是访达：没勾「在程序坞中保留」时，它无窗口的应用级入口卡不显示。
+    static func stripAdmitsSnapshotItem(
+        bundleID: String?,
+        isAppLevelFallback: Bool,
+        isDrawerMember: Bool,
+        showsFinderEntry: Bool
+    ) -> Bool {
+        _ = isDrawerMember
+        if isAppLevelFallback, FinderTaskbarPolicy.isFinder(bundleID), !showsFinderEntry { return false }
+        return true
+    }
+
+    /// 是否为一个保留应用补主栏占位（没在跑、或在跑却只剩应用级兜底卡时）。
+    /// 抽屉成员不补：没在跑的抽屉应用只待在抽屉里；消息区成员由消息区自己画。
+    static func stripInjectsKeptPlaceholder(
+        bundleID: String,
+        isDrawerMember: Bool,
+        isMessagingZoneMember: Bool
+    ) -> Bool {
+        !bundleID.isEmpty && !isDrawerMember && !isMessagingZoneMember
+    }
+
+    /// 主栏上的窗口卡能否拖进抽屉收纳。抽屉成员的卡不行：它已经在抽屉里，
+    /// 而收纳预览拖出时的撤销会 `drawer.remove`，把它误踢出抽屉。
+    static func stripCardCanStash(bundleID: String?, isDrawerMember: Bool) -> Bool {
+        guard let bundleID, !bundleID.isEmpty else { return false }
+        return !isDrawerMember
+    }
+
     /// 角标读取范围（2026-08-23 起与消息区解绑）：**身份** ∩ 在跑。
     /// 抽屉里的应用在跑时窗口卡照常上主栏，红点画在那张卡上，所以不再剔除抽屉成员。
     /// 输出按字典序，让 `BadgeStore` 的「变了才重走」比较稳定。

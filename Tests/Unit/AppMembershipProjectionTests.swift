@@ -80,6 +80,63 @@ final class AppMembershipProjectionTests: XCTestCase {
     }
 
 
+    // MARK: - 抽屉应用上主栏（自用改版的核心设计，同步上游后这一节变红 = 设计被改回去了）
+
+    func testDrawerAppWindowCardIsAdmittedToStrip() {
+        XCTAssertTrue(AppMembershipProjection.stripAdmitsSnapshotItem(
+            bundleID: "com.apple.MobileSMS", isAppLevelFallback: false,
+            isDrawerMember: true, showsFinderEntry: true),
+            "抽屉里的应用在跑时，它的窗口卡必须出现在主栏")
+    }
+
+    func testDrawerAppRunningWithoutWindowIsAdmittedToStrip() {
+        XCTAssertTrue(AppMembershipProjection.stripAdmitsSnapshotItem(
+            bundleID: "com.apple.MobileSMS", isAppLevelFallback: true,
+            isDrawerMember: true, showsFinderEntry: true),
+            "抽屉里的应用在跑但没开窗口时，应用级卡也要出现在主栏")
+    }
+
+    func testStripAdmissionIgnoresDrawerMembership() {
+        for isFallback in [false, true] {
+            XCTAssertEqual(
+                AppMembershipProjection.stripAdmitsSnapshotItem(
+                    bundleID: "com.example.app", isAppLevelFallback: isFallback,
+                    isDrawerMember: true, showsFinderEntry: true),
+                AppMembershipProjection.stripAdmitsSnapshotItem(
+                    bundleID: "com.example.app", isAppLevelFallback: isFallback,
+                    isDrawerMember: false, showsFinderEntry: true))
+        }
+    }
+
+    func testFinderEntryGateStillApplies() {
+        XCTAssertFalse(AppMembershipProjection.stripAdmitsSnapshotItem(
+            bundleID: FinderTaskbarPolicy.bundleID, isAppLevelFallback: true,
+            isDrawerMember: false, showsFinderEntry: false))
+        XCTAssertTrue(AppMembershipProjection.stripAdmitsSnapshotItem(
+            bundleID: FinderTaskbarPolicy.bundleID, isAppLevelFallback: false,
+            isDrawerMember: false, showsFinderEntry: false),
+            "访达的真窗口卡不受「保留」闸门影响")
+    }
+
+    func testStoppedDrawerAppGetsNoStripPlaceholder() {
+        XCTAssertFalse(AppMembershipProjection.stripInjectsKeptPlaceholder(
+            bundleID: "com.example.app", isDrawerMember: true, isMessagingZoneMember: false),
+            "没在跑的抽屉应用只待在抽屉里")
+        XCTAssertTrue(AppMembershipProjection.stripInjectsKeptPlaceholder(
+            bundleID: "com.example.app", isDrawerMember: false, isMessagingZoneMember: false))
+        XCTAssertFalse(AppMembershipProjection.stripInjectsKeptPlaceholder(
+            bundleID: "com.example.app", isDrawerMember: false, isMessagingZoneMember: true))
+    }
+
+    func testDrawerAppStripCardCannotBeStashedAgain() {
+        XCTAssertFalse(AppMembershipProjection.stripCardCanStash(
+            bundleID: "com.example.app", isDrawerMember: true))
+        XCTAssertTrue(AppMembershipProjection.stripCardCanStash(
+            bundleID: "com.example.app", isDrawerMember: false))
+        XCTAssertFalse(AppMembershipProjection.stripCardCanStash(bundleID: nil, isDrawerMember: false))
+        XCTAssertFalse(AppMembershipProjection.stripCardCanStash(bundleID: "", isDrawerMember: false))
+    }
+
     // MARK: - badgeEligibleIDs = 身份 ∩ 在跑（抽屉应用在跑时窗口卡也在主栏，照样有角标）
 
     func testBadgeEligibleIDsUsesIdentityNotZone() {

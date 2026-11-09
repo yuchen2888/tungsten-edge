@@ -30,6 +30,23 @@ jobs:
           sudo xcode-select -s "$XCODE"
           xcodebuild -version
 
+      # 守护测试：锁住「抽屉里的应用运行时显示在主栏」这个自用改动。同步上游后它失败，
+      # 说明上游又把抽屉应用藏回去了——直接停下，不出包。
+      - name: Guard tests (drawer apps on strip)
+        run: |
+          set -o pipefail
+          mkdir -p build
+          xcodebuild test \
+            -project macos-dock-cc-v2.xcodeproj \
+            -scheme macos-dock-cc-v2 \
+            -configuration Debug \
+            -derivedDataPath build/TestDD \
+            -destination 'platform=macOS' \
+            -only-testing:macos-dock-cc-v2Tests/AppMembershipProjectionTests \
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tee build/xcodebuild-guard.log | grep -E 'error:|Executed [0-9]+ tests|\*\* TEST' || true
+          grep -q '\*\* TEST SUCCEEDED \*\*' build/xcodebuild-guard.log
+
       - name: Build Release
         run: |
           set -o pipefail
@@ -84,5 +101,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: xcodebuild-build-log
-          path: build/xcodebuild-build.log
+          path: |
+            build/xcodebuild-guard.log
+            build/xcodebuild-build.log
           if-no-files-found: ignore

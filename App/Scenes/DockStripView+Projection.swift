@@ -56,9 +56,12 @@ extension DockStripView {
         // 应用级兜底卡）照常出现在主栏，跟没收进抽屉的应用一样能点击切换、最小化、右键关闭。
         // 不在跑的抽屉应用仍然只在抽屉里——下面的保留占位继续跳过抽屉成员。
         let items = snapshotItems.filter { item in
-            let bid = item.bundleIdentifier ?? ""
-            if item.isAppLevelFallback, FinderTaskbarPolicy.isFinder(bid), !showsFinderEntry { return false }
-            return true
+            AppMembershipProjection.stripAdmitsSnapshotItem(
+                bundleID: item.bundleIdentifier,
+                isAppLevelFallback: item.isAppLevelFallback,
+                isDrawerMember: drawerStore.contains(item.bundleIdentifier ?? ""),
+                showsFinderEntry: showsFinderEntry
+            )
         }
 
         var messaging: [StripEntry] = []
@@ -104,8 +107,11 @@ extension DockStripView {
         let snapshotByBundle = Dictionary(grouping: snapshotItems, by: { $0.bundleIdentifier ?? "" })
         var keptPlaceholders: [StripEntry] = []
         for bid in keptIDs {
-            guard !drawerStore.contains(bid),
-                  !msgSet.contains(bid) else { continue }
+            guard AppMembershipProjection.stripInjectsKeptPlaceholder(
+                bundleID: bid,
+                isDrawerMember: drawerStore.contains(bid),
+                isMessagingZoneMember: msgSet.contains(bid)
+            ) else { continue }
             // 访达有意留在 `.window` 兜底卡这条路径上：它带着专属菜单（最近使用的文件夹 /
             // 新建窗口）和「点击开主目录」，换成 .keptApp 的 LauncherChip 会把这些全丢掉。
             // kept 对访达只是上面那道可见性闸门。
