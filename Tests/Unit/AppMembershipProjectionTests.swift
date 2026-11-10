@@ -137,6 +137,53 @@ final class AppMembershipProjectionTests: XCTestCase {
         XCTAssertFalse(AppMembershipProjection.stripCardCanStash(bundleID: "", isDrawerMember: false))
     }
 
+    // MARK: - 最近关闭（自用改版：固定 2 格，新退出的排第一，最旧的被挤掉）
+
+    func testRecordingQuitsPutsNewestFirstAndCaps() {
+        var history: [String] = []
+        history = AppMembershipProjection.recordingQuits(["a"], into: history, limit: 3)
+        history = AppMembershipProjection.recordingQuits(["b"], into: history, limit: 3)
+        history = AppMembershipProjection.recordingQuits(["c"], into: history, limit: 3)
+        history = AppMembershipProjection.recordingQuits(["d"], into: history, limit: 3)
+        XCTAssertEqual(history, ["d", "c", "b"])
+    }
+
+    func testRecordingQuitsMovesRequitToFront() {
+        let history = AppMembershipProjection.recordingQuits(["b"], into: ["a", "b", "c"], limit: 10)
+        XCTAssertEqual(history, ["b", "a", "c"], "再次退出的 App 回到第一位，不重复")
+    }
+
+    func testRecordingQuitsDropsEmpty() {
+        XCTAssertEqual(AppMembershipProjection.recordingQuits(["", "a"], into: [""], limit: 10), ["a"])
+    }
+
+    func testRecentlyQuitShowsTwoNewest() {
+        let visible = AppMembershipProjection.visibleRecentlyQuitIDs(
+            history: ["c", "b", "a"], runningIDs: [], keptIDs: [], drawerIDs: [])
+        XCTAssertEqual(visible, ["c", "b"])
+        XCTAssertEqual(AppMembershipProjection.recentlyQuitSlotCount, 2)
+    }
+
+    func testRelaunchedAppLeavesAndOlderOneFillsIn() {
+        let visible = AppMembershipProjection.visibleRecentlyQuitIDs(
+            history: ["c", "b", "a"], runningIDs: ["c"], keptIDs: [], drawerIDs: [])
+        XCTAssertEqual(visible, ["b", "a"], "重新打开的 App 离开最近关闭区，更早的补位")
+    }
+
+    func testKeptAndDrawerAppsNeverShowInRecentlyQuit() {
+        let visible = AppMembershipProjection.visibleRecentlyQuitIDs(
+            history: ["kept", "drawer", "x", "y"], runningIDs: [],
+            keptIDs: ["kept"], drawerIDs: ["drawer"])
+        XCTAssertEqual(visible, ["x", "y"], "保留应用本来就在主栏上；抽屉应用退出后回抽屉")
+    }
+
+    func testFinderAndExcludedNeverShowInRecentlyQuit() {
+        let visible = AppMembershipProjection.visibleRecentlyQuitIDs(
+            history: [FinderTaskbarPolicy.bundleID, "self", "x"], runningIDs: [],
+            keptIDs: [], drawerIDs: [], excludedIDs: ["self"])
+        XCTAssertEqual(visible, ["x"])
+    }
+
     // MARK: - badgeEligibleIDs = 身份 ∩ 在跑（抽屉应用在跑时窗口卡也在主栏，照样有角标）
 
     func testBadgeEligibleIDsUsesIdentityNotZone() {

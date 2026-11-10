@@ -79,6 +79,7 @@ enum DiagnosticSnapshotCollector {
                         case .window(let window): item = window; kind = "window"; bid = window.bundleIdentifier
                         case .messagingApp(let bundleID, let main): item = main; kind = "messagingApp"; bid = bundleID
                         case .keptApp(let bundleID): item = nil; kind = "keptApp"; bid = bundleID
+                        case .recentApp: extras.append(prefix + " kind=recentApp"); continue
                         case .pinnedFolder: extras.append(prefix + " kind=pinnedFolder"); continue
                         case .shelf: extras.append(prefix + " kind=shelf"); continue
                         case .trash: extras.append(prefix + " kind=trash"); continue

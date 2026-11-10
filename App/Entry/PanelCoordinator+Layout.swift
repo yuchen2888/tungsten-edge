@@ -89,6 +89,18 @@ extension PanelCoordinator {
             }
     }
 
+    /// 自用改版：最近关闭区的内容或开关一变，条宽跟着变。写法同 store 订阅。
+    func subscribeRecentlyQuitStore() {
+        recentlyQuitSubscription = RecentlyQuitAppStore.shared.$bundleIDs
+            .removeDuplicates()
+            .combineLatest(settingsStore.$showRecentlyQuit.removeDuplicates())
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                DispatchQueue.main.async { [weak self] in self?.relayout(animated: true) }
+            }
+    }
+
     func subscribeRunningApplicationStore() {
         runningApplicationStoreSubscription = runningApplicationStore.$runningBundleIDs
             .receive(on: DispatchQueue.main)

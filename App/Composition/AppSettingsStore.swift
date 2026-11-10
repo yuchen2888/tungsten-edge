@@ -103,6 +103,8 @@ final class AppSettingsStore: ObservableObject {
     /// 中转格是否显示在固定文件夹区头位。关掉后它不再渲染，暂存的文件不受影响。
     @Published private(set) var showShelf: Bool
     @Published private(set) var showTrash: Bool
+    /// 自用改版：主栏最右端的「最近关闭的 App」区。默认开。
+    @Published private(set) var showRecentlyQuit: Bool
     /// Front-window bar: the running dot under the card whose window is in front stretches into a
     /// short bar (`FrontWindowIndicatorDecision`). Off by default for everyone (owner 2026-10-16),
     /// so it sits in `register(defaults:)` like the other plain toggles — no fresh-install seed.
@@ -174,6 +176,7 @@ final class AppSettingsStore: ObservableObject {
             Keys.launchAtLogin: false,
             Keys.showShelf: true,
             Keys.showTrash: true,
+            Keys.showRecentlyQuit: true,
             Keys.frontWindowBar: false,
             Keys.fullscreenIntentEnabled: true,
             Keys.nativeDockAutoHideDelay: Self.defaultNativeDockAutoHideDelay,
@@ -184,6 +187,7 @@ final class AppSettingsStore: ObservableObject {
         launchAtLogin = defaults.bool(forKey: Keys.launchAtLogin)
         showShelf = defaults.bool(forKey: Keys.showShelf)
         showTrash = defaults.bool(forKey: Keys.showTrash)
+        showRecentlyQuit = defaults.bool(forKey: Keys.showRecentlyQuit)
         frontWindowBar = defaults.bool(forKey: Keys.frontWindowBar)
         // 有意**不**进上面的 register：缺键即 false = 老用户维持关。
         // 全新安装那一次由 `seedWindowLiftEnabledForFreshInstall()` 显式写成 true——
@@ -370,6 +374,12 @@ final class AppSettingsStore: ObservableObject {
         defaults.set(value, forKey: Keys.showShelf)
     }
 
+    func setShowRecentlyQuit(_ value: Bool) {
+        guard showRecentlyQuit != value else { return }
+        showRecentlyQuit = value
+        defaults.set(value, forKey: Keys.showRecentlyQuit)
+    }
+
     func setShowTrash(_ value: Bool) {
         guard showTrash != value else { return }
         showTrash = value
@@ -551,6 +561,7 @@ private enum Keys {
     static let showShelf = "com.tungsten.edge.showShelf"
     // Never read the retired com.tungsten.edge.trash.visible key.
     static let showTrash = "com.tungsten.edge.showTrash"
+    static let showRecentlyQuit = "personal.showRecentlyQuit"
     static let frontWindowBar = "com.tungsten.edge.frontWindowBar"
     /// Continuous bar height in points (since the drag-to-resize release).
     static let dockPanelHeight = "com.tungsten.edge.dockPanelHeight"

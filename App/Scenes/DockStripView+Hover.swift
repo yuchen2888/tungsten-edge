@@ -74,6 +74,8 @@ extension DockStripView {
             return appBubbleName(bundleID: bid, fallback: bid)
         case let .keptApp(bid):
             return appBubbleName(bundleID: bid, fallback: bid)
+        case let .recentApp(bid):
+            return appBubbleName(bundleID: bid, fallback: bid)
         case .trash:
             return String(localized: "Trash")
         case .shelf:

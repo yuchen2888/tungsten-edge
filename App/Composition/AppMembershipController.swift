@@ -170,6 +170,37 @@ enum AppMembershipProjection {
         return !isDrawerMember
     }
 
+    // MARK: - 自用改版：最近关闭的 App
+    //
+    // 主栏最右端（抽屉左边、固定文件夹 / 废纸篓之前）固定 2 格，放最近退出的 App；新退出的排第一，
+    // 最旧的被挤掉。点一下重新打开，打开后它离开这一区、由更早的补位。保留应用（本来就在主栏上）
+    // 和抽屉成员（退出后回抽屉）不进这一区。由 `AppMembershipProjectionTests` 的「最近关闭」一节锁住。
+
+    /// 主栏上「最近关闭」区的格数。
+    static let recentlyQuitSlotCount = 2
+
+    /// 把这一批退出记进历史：新退出的排最前，去重、去空，截到 `limit` 条。
+    static func recordingQuits(_ quitIDs: [String], into history: [String], limit: Int) -> [String] {
+        Array(filteredUnique(quitIDs + history, excluding: []).prefix(max(0, limit)))
+    }
+
+    /// 「最近关闭」区此刻显示哪几个（历史顺序，最多 `limit` 个）。
+    /// 滤掉：正在运行的（主栏上已有它的卡）、保留应用（退出后本来就留在主栏）、抽屉成员（退出后回抽屉）、
+    /// 访达、以及调用方额外排除的（本 App 自己）。
+    static func visibleRecentlyQuitIDs(
+        history: [String],
+        runningIDs: Set<String>,
+        keptIDs: Set<String>,
+        drawerIDs: Set<String>,
+        excludedIDs: Set<String> = [],
+        limit: Int = recentlyQuitSlotCount
+    ) -> [String] {
+        let hidden = runningIDs.union(keptIDs).union(drawerIDs).union(excludedIDs)
+        return Array(filteredUnique(history, excluding: hidden)
+            .filter { !FinderTaskbarPolicy.isFinder($0) }
+            .prefix(max(0, limit)))
+    }
+
     /// 角标读取范围（2026-08-23 起与消息区解绑）：**身份** ∩ 在跑。
     /// 抽屉里的应用在跑时窗口卡照常上主栏，红点画在那张卡上，所以不再剔除抽屉成员。
     /// 输出按字典序，让 `BadgeStore` 的「变了才重走」比较稳定。

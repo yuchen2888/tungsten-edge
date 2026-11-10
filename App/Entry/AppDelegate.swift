@@ -517,6 +517,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         DiagnosticReport.armFirstActivationSnapshot()
         appMembershipController.reconcileInvalidMemberships()
         runningApplicationStore.start()
+        // 自用改版：最近关闭区的退出记账，只在任务条运行期间观察（见 `RecentlyQuitAppStore`）。
+        RecentlyQuitAppStore.shared.startObserving(runningBundleIDs: runningApplicationStore.$runningBundleIDs)
         runtime.start()
 
         // Auto tier of the messaging list: register an app only when it both matches the
@@ -837,6 +839,7 @@ extension AppDelegate: PermissionEffectHandler {
         messagingAutoRegisterSubscription = nil
         badgeContextSubscription?.cancel()
         badgeContextSubscription = nil
+        RecentlyQuitAppStore.shared.stopObserving()
         runtime.onToggleDrawer = nil
         scrollReverserSettingSubscription?.cancel()
         scrollReverserSettingSubscription = nil

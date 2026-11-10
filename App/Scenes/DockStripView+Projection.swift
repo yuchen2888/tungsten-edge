@@ -231,7 +231,18 @@ extension DockStripView {
         // divider between them.
         let headEntries = messaging + (settingsStore.showShelf ? [StripEntry.shelf] : [])
         let tailEntries = pinnedEntries + (settingsStore.showTrash ? [StripEntry.trash] : [])
-        var zones = [headEntries, liveWithGhost, tailEntries]
+        // 自用改版：最近关闭区，夹在窗口区与固定文件夹 / 废纸篓之间，自成一区（两侧各一条分隔线）。
+        // 纯启动器、每屏都在，不进顺序层也不参与多屏过滤。
+        let recentEntries: [StripEntry] = settingsStore.showRecentlyQuit
+            ? AppMembershipProjection.visibleRecentlyQuitIDs(
+                history: recentlyQuitStore.bundleIDs,
+                runningIDs: runningIDs,
+                keptIDs: Set(keptIDs),
+                drawerIDs: Set(drawerStore.bundleIDs),
+                excludedIDs: Set([Bundle.main.bundleIdentifier].compactMap { $0 })
+              ).map { StripEntry.recentApp(bundleID: $0) }
+            : []
+        var zones = [headEntries, liveWithGhost, recentEntries, tailEntries]
             .map { zone in zone.filter { $0.id != collapsedEntryID } }
             .filter { !$0.isEmpty }
         var entries: [StripEntry] = []

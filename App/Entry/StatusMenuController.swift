@@ -78,6 +78,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
     /// 下面四条是普通勾选项，**恒在**（菜单开着时不许增删行），勾选状态由 refreshCheckmarks 落。
     private let showShelfItem = NSMenuItem(title: String(localized: "Show Shelf"), action: #selector(toggleShowShelf), keyEquivalent: "")
     private let showTrashItem = NSMenuItem(title: String(localized: "Show Trash"), action: #selector(toggleShowTrash), keyEquivalent: "")
+    private let showRecentlyQuitItem = NSMenuItem(title: String(localized: "Show Recently Quit Apps"), action: #selector(toggleShowRecentlyQuit), keyEquivalent: "")
     private let hoverNameItem = NSMenuItem(title: String(localized: "Show app name on hover"), action: #selector(toggleHoverName), keyEquivalent: "")
     private let windowLiftItem = NSMenuItem(title: String(localized: "Keep maximized windows above the taskbar"), action: #selector(toggleWindowLift), keyEquivalent: "")
     private let nativeDockSliderView: PreferenceSliderMenuItemView
@@ -266,6 +267,8 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         menu.addItem(showShelfItem)
         showTrashItem.target = self
         menu.addItem(showTrashItem)
+        showRecentlyQuitItem.target = self
+        menu.addItem(showRecentlyQuitItem)
         hoverNameItem.target = self
         menu.addItem(hoverNameItem)
         windowLiftItem.target = self
@@ -497,6 +500,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
     private func refreshTaskbarPreferenceStates() {
         showShelfItem.state = store.showShelf ? .on : .off
         showTrashItem.state = store.showTrash ? .on : .off
+        showRecentlyQuitItem.state = store.showRecentlyQuit ? .on : .off
         hoverNameItem.state = store.hoverStyle.isExpressive ? .on : .off
         windowLiftItem.state = store.windowLiftEnabled ? .on : .off
     }
@@ -692,6 +696,11 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
 
     @objc private func toggleShowShelf() {
         store.setShowShelf(!store.showShelf)
+        refreshCheckmarks()
+    }
+
+    @objc private func toggleShowRecentlyQuit() {
+        store.setShowRecentlyQuit(!store.showRecentlyQuit)
         refreshCheckmarks()
     }
 

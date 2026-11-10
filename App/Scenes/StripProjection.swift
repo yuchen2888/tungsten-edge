@@ -17,6 +17,9 @@ enum StripEntry: Identifiable, Hashable {
     /// id 恒为 "app-\(bid)"——与 AppTracker rebuildSnapshot() 的无窗口 fallback token 同串，
     /// 是退出↔占位切换时 live 序连续的命门。
     case keptApp(bundleID: String)
+    /// 自用改版：「最近关闭的 App」区的一格（主栏最右端、固定文件夹 / 废纸篓之前，自成一区）。
+    /// 只出现在 App 没在运行时；点一下启动。不可拖拽，不进顺序层。
+    case recentApp(bundleID: String)
     /// 固定文件夹区的一格（窗口区右侧、紧挨废纸篓左边，与废纸篓同一区、中间无分割线）。path 即身份。
     case pinnedFolder(path: String)
     /// 中转格：固定应用区（消息区）最右一格的暂存格，与该区同组、共用其后的分割线；不可拖拽。
@@ -43,6 +46,7 @@ enum StripEntry: Identifiable, Hashable {
         // when the main window opens/closes.
         case let .messagingApp(bid, _): return "msg-app-\(bid)"
         case let .keptApp(bid): return "app-\(bid)"
+        case let .recentApp(bid): return "recent-\(bid)"
         case let .pinnedFolder(path): return "folder-\(path)"
         case .shelf: return "shelf"
         case .trash: return "trash"
@@ -165,6 +169,8 @@ struct StripLayoutKey: Equatable {
             form = .launcher    // both states render as a fixed-size icon chip
         case .keptApp:
             form = .launcher    // fixed-size kept-app icon chip
+        case .recentApp:
+            form = .launcher    // fixed-size launcher icon chip
         case .pinnedFolder:
             form = .launcher    // fixed-size folder chip
         case .shelf, .trash:

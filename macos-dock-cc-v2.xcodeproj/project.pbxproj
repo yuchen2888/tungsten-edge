@@ -327,6 +327,7 @@
 		B1000000000000000000000D /* DockBadgeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000019B3 /* DockBadgeReader.swift */; };
 		B1000000000000000000000C /* BadgeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A000000000000000000019B2 /* BadgeStore.swift */; };
 		A00000000000000000009501 /* KeptAppStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000009500 /* KeptAppStore.swift */; };
+		E7A000000000000000000002 /* RecentlyQuitAppStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A000000000000000000001 /* RecentlyQuitAppStore.swift */; };
 		A00000000000000000009511 /* RunningApplicationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000009510 /* RunningApplicationStore.swift */; };
 		A00000000000000000009521 /* AppMembershipController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000009520 /* AppMembershipController.swift */; };
 		A00000000000000000009531 /* KeptAppStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000009530 /* KeptAppStoreTests.swift */; };
@@ -921,6 +922,7 @@
 		A00000000000000000009590 /* AppMembershipMenuPlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMembershipMenuPlanTests.swift; sourceTree = "<group>"; };
 		A00000000000000000009310 /* ShelfStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfStore.swift; sourceTree = "<group>"; };
 		A00000000000000000009500 /* KeptAppStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeptAppStore.swift; sourceTree = "<group>"; };
+		E7A000000000000000000001 /* RecentlyQuitAppStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentlyQuitAppStore.swift; sourceTree = "<group>"; };
 		A00000000000000000009510 /* RunningApplicationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningApplicationStore.swift; sourceTree = "<group>"; };
 		A00000000000000000009520 /* AppMembershipController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMembershipController.swift; sourceTree = "<group>"; };
 		A00000000000000000009530 /* KeptAppStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeptAppStoreTests.swift; sourceTree = "<group>"; };
@@ -1073,6 +1075,7 @@
 				A00000000000000000009910 /* FileMover.swift */,
 				A00000000000000000009310 /* ShelfStore.swift */,
 				A00000000000000000009500 /* KeptAppStore.swift */,
+				E7A000000000000000000001 /* RecentlyQuitAppStore.swift */,
 				A00000000000000000009510 /* RunningApplicationStore.swift */,
 				A00000000000000000009520 /* AppMembershipController.swift */,
 				A00000000000000000000028 /* IntentPipeline */,
@@ -1929,6 +1932,7 @@
 					A00000000000000000009361 /* FolderChipDropZone.swift in Sources */,
 					A00000000000000000009311 /* ShelfStore.swift in Sources */,
 					A00000000000000000009501 /* KeptAppStore.swift in Sources */,
+					E7A000000000000000000002 /* RecentlyQuitAppStore.swift in Sources */,
 					A00000000000000000009511 /* RunningApplicationStore.swift in Sources */,
 					A00000000000000000009521 /* AppMembershipController.swift in Sources */,
 					A00000000000000000009321 /* ShelfChip.swift in Sources */,

@@ -17,6 +17,19 @@ extension DockStripView {
         )
     }
 
+    /// 最近关闭区的右键菜单：「在程序坞中保留」（勾上后它变成保留应用，自然离开这一区）
+    /// + 「从最近关闭中移除」。
+    func recentAppMenuItems(bundleID: String) -> [LauncherMembershipItem] {
+        [
+            LauncherMembershipItem(label: String(localized: "Keep in Dock"), isChecked: false) {
+                appMembershipController.setKept(bundleID, enabled: true)
+            },
+            LauncherMembershipItem(label: String(localized: "Remove from Recently Quit Apps")) {
+                recentlyQuitStore.remove(bundleID)
+            },
+        ]
+    }
+
     /// 固定文件夹左键唯一入口：按 `FolderInteraction.primaryAction` 分派（现固定 = 内容预览）。
     /// A/B「左键预览 vs 左键开 Finder」只改策略枚举，不动这里的调用点。
     func folderPrimaryTap(_ path: String) {

@@ -263,6 +263,7 @@ final class PanelCoordinator: NSObject {
     var drawerStoreWidthSubscription: AnyCancellable?
     var messagingStoreWidthSubscription: AnyCancellable?
     var keptAppStoreSubscription: AnyCancellable?
+    var recentlyQuitSubscription: AnyCancellable?
     var runningApplicationStoreSubscription: AnyCancellable?
     var dragSpringSubscription: AnyCancellable?
     var dragInhibitorSubscription: AnyCancellable?
@@ -472,6 +473,7 @@ final class PanelCoordinator: NSObject {
         subscribeDrawerStoreWidth()
         subscribeMessagingStoreWidth()
         subscribeKeptAppStore()
+        subscribeRecentlyQuitStore()
         subscribeRunningApplicationStore()
         subscribeDragSpringLoad()
         subscribeDragInhibitor()

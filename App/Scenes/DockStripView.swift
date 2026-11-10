@@ -14,6 +14,7 @@ struct DockStripView: View {
     @EnvironmentObject var folderCoverStore: PinnedFolderCoverStore
     @EnvironmentObject var shelfStore: ShelfStore
     @ObservedObject var trashStore = TrashStateStore.shared
+    @ObservedObject var recentlyQuitStore = RecentlyQuitAppStore.shared
     @EnvironmentObject var settingsStore: AppSettingsStore
     @EnvironmentObject var displayTopologyStore: DisplayTopologyStore
 
@@ -707,7 +708,7 @@ struct DockStripView: View {
             }
         case let .keptApp(bid):
             launcherTap(bid, hasRealWindow: false)   // 保留占位只在没有真窗口时存在
-        case .pinnedFolder, .shelf, .trash, .divider, .externalDropGhost:
+        case .recentApp, .pinnedFolder, .shelf, .trash, .divider, .externalDropGhost:
             return   // 空档不可拖，也就不会有飞行中的载荷指向它
         }
     }
@@ -821,7 +822,7 @@ struct DockStripView: View {
                 : nil
             return DragCarrierGeometry.pickUpPose(chipHeight: height, pressedScale: nil,
                                                   hoverScale: hoverScale)
-        case .shelf, .trash, .divider, .externalDropGhost:
+        case .recentApp, .shelf, .trash, .divider, .externalDropGhost:
             return .resting
         }
     }
@@ -1282,6 +1283,9 @@ struct DockStripView: View {
                 })
         case .divider:
             stripEntryView(entry, projection: projection)
+        case .recentApp:
+            // 最近关闭区：只点击启动，不可拖拽、不进顺序层。
+            stripEntryView(entry, projection: projection)
         case .externalDropGhost:
             // 让位空档：**刻意不经 `stripEntryView`**。那个函数是悬停帧的唯一上报口，
             // 而空档既不能上报悬停帧（不弹气泡），更不能上报 `ChipFramePreferenceKey`
@@ -1489,6 +1493,25 @@ struct DockStripView: View {
                 onTap: reopen,
                 onLaunch: { runtime.beginLaunch(bid) }
             )
+        case let .recentApp(bid):
+            LauncherChip(
+                bundleID: bid,
+                isRunning: false,
+                isHidden: false,
+                finderHasRealWindow: false,   // 访达不进最近关闭区
+
+                isLaunching: runtime.launchingBundleIDs.contains(bid),
+                scale: dockScale,
+                layout: .bar,
+                hoverStyle: hoverStyle,
+                hoverInput: .resolved(hovered),
+                windowEntriesProvider: { [] },   // 没在运行，没有窗口可列
+                onActivateWindow: { runtime.activate(windowID: $0) },
+                membershipItems: recentAppMenuItems(bundleID: bid),
+                onLaunch: { runtime.beginLaunch(bid) }
+            )
+            .stripEntrance(id: entrance ? entry.id : nil, delay: 0,
+                           animatedEntryIDs: $animatedEntryIDs)
         case .externalDropGhost:
             // 走不到：`chipWithReorder` 的空档分支不经 `stripEntryView`（理由见那里），
             // 载体快照也不会拍一个不可拖的东西。留空是为了不给这个 switch 加 `default`。
