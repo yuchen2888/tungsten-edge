@@ -4,6 +4,10 @@
 # 里点「仍要打开」，并重新授予辅助功能权限。只供自己使用，不对外分发。
 #
 # 触发：推送到 master，或在 Actions 页面手动点 Run workflow。
+#
+# 免费公开仓库排 macOS 机器优先级最低，macos-26（= macos-latest）最挤，经常 15 分钟分不到
+# 机器就被放弃。所以同时向三种机器排队，哪个排上就用哪个出的包（每个包名带机器名），
+# 其余排不上不影响整次运行的结果（continue-on-error）。三种镜像都装了 Xcode 26。
 name: Build App
 
 on:
@@ -17,9 +21,14 @@ concurrency:
 
 jobs:
   build:
-    name: Build universal app (ad-hoc signed)
-    runs-on: macos-26
+    name: Build universal app (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 40
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-26, macos-15, macos-15-intel]
     steps:
       - uses: actions/checkout@v4
 
@@ -92,7 +101,7 @@ jobs:
       - name: Upload app
         uses: actions/upload-artifact@v4
         with:
-          name: TungstenEdge-personal-${{ github.run_number }}
+          name: TungstenEdge-personal-${{ github.run_number }}-${{ matrix.os }}
           path: build/TungstenEdge-personal.zip
           retention-days: 30
           if-no-files-found: error
@@ -101,7 +110,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: xcodebuild-build-log
+          name: xcodebuild-build-log-${{ matrix.os }}
           path: |
             build/xcodebuild-guard.log
             build/xcodebuild-build.log
