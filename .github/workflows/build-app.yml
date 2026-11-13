@@ -112,8 +112,12 @@ jobs:
         run: |
           for f in build/xcodebuild-guard.log build/xcodebuild-build.log; do
             [ -f "$f" ] || continue
-            grep -E "error:|failed \(|\*\* (TEST|BUILD) FAILED" "$f" | grep -v "linkd.autoShortcut" | head -25 | while IFS= read -r line; do
-              echo "::error title=$(basename "$f")::${line//$'\n'/ }"
+            {
+              grep -iE "error|failed|unable|could not|cannot|not found" "$f" | grep -v "linkd.autoShortcut" | head -25
+              echo "--- last lines ---"
+              tail -n 12 "$f"
+            } | while IFS= read -r line; do
+              [ -n "$line" ] && echo "::error title=$(basename "$f")::${line}"
             done
           done
 
