@@ -106,6 +106,17 @@ jobs:
           retention-days: 30
           if-no-files-found: error
 
+      # 失败时把编译 / 测试报错抄成 annotation，公开页面上不登录也能看到（日志本身要登录才能看）。
+      - name: Surface errors as annotations
+        if: failure()
+        run: |
+          for f in build/xcodebuild-guard.log build/xcodebuild-build.log; do
+            [ -f "$f" ] || continue
+            grep -E "error:|failed \(|\*\* (TEST|BUILD) FAILED" "$f" | grep -v "linkd.autoShortcut" | head -25 | while IFS= read -r line; do
+              echo "::error title=$(basename "$f")::${line//$'\n'/ }"
+            done
+          done
+
       - name: Upload build log
         if: failure()
         uses: actions/upload-artifact@v4
