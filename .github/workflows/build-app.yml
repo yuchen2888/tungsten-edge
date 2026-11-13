@@ -43,6 +43,7 @@ jobs:
             -derivedDataPath build/TestDD \
             -destination 'platform=macOS' \
             -only-testing:macos-dock-cc-v2Tests/AppMembershipProjectionTests \
+            -only-testing:macos-dock-cc-v2Tests/MessagingMainWindowDecisionTests \
             CODE_SIGNING_ALLOWED=NO \
             2>&1 | tee build/xcodebuild-guard.log | grep -E 'error:|Executed [0-9]+ tests|\*\* TEST' || true
           grep -q '\*\* TEST SUCCEEDED \*\*' build/xcodebuild-guard.log

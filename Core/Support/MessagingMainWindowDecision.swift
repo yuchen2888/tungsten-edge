@@ -63,6 +63,28 @@ enum MessagingMainWindowDecision {
         return candidates.count == 1 ? candidates[0].id : nil
     }
 
+    /// 自用改版：除了主窗口，还要并进图标、不单独出卡的窗口。
+    ///
+    /// 只在主窗口是靠第 1 条（标题 == 应用名）认出来时才有：别的**同样叫应用名、且没最小化**的窗，
+    /// 就是微信冷启动残留的那扇登录窗（order-out 后 CG 里还在）——单独出卡的话，是一张点了没反应的
+    /// 「微信」卡（owner 2026-11-13 报）。最小化的同名窗不并：那可能正是被最小化的真主窗口
+    /// （见上面「没最小化优先」那条），并掉就没法从卡上还原了。
+    static func absorbedWindowIDs(
+        bundleID: String,
+        windows: [WindowFact],
+        titleMatchesAppName: (String) -> Bool
+    ) -> Set<String> {
+        guard let mainID = mainWindowID(bundleID: bundleID, windows: windows,
+                                        titleMatchesAppName: titleMatchesAppName) else { return [] }
+        var ids: Set<String> = [mainID]
+        guard let main = windows.first(where: { $0.id == mainID }),
+              titleMatchesAppName(main.title) else { return ids }
+        for window in windows where !window.isMinimized && titleMatchesAppName(window.title) {
+            ids.insert(window.id)
+        }
+        return ids
+    }
+
     static func normalize(_ title: String) -> String {
         title.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     }

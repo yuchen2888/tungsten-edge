@@ -70,17 +70,18 @@ extension DockStripView {
             let appWindows = items.filter { $0.bundleIdentifier == bid && !$0.isAppLevelFallback }
             // 认主窗口的三条规则在纯 `MessagingMainWindowDecision` 里（标题匹配 → 排除后唯一 → 认不出）；
             // 这里只把窗口事实喂进去。
+            let windowFacts: [MessagingMainWindowDecision.WindowFact] = appWindows.map {
+                .init(id: $0.id, title: $0.title,
+                      isMinimized: $0.status == WindowStatus.minimized.rawValue,
+                      area: ($0.bounds?.width ?? 0) * ($0.bounds?.height ?? 0))
+            }
+            let titleMatches: (String) -> Bool = { AppDisplayNameResolver.titleMatchesAppName($0, bundleID: bid) }
             let mainID = MessagingMainWindowDecision.mainWindowID(
-                bundleID: bid,
-                windows: appWindows.map {
-                    .init(id: $0.id, title: $0.title,
-                          isMinimized: $0.status == WindowStatus.minimized.rawValue,
-                          area: ($0.bounds?.width ?? 0) * ($0.bounds?.height ?? 0))
-                },
-                titleMatchesAppName: { AppDisplayNameResolver.titleMatchesAppName($0, bundleID: bid) }
-            )
+                bundleID: bid, windows: windowFacts, titleMatchesAppName: titleMatches)
             let main = appWindows.first { $0.id == mainID }
-            if let main { absorbedWindowIDs.insert(main.id) }
+            // 自用改版：主窗口之外，冷启动残留的同名登录窗也并进图标，不再单独出一张点不动的卡。
+            absorbedWindowIDs.formUnion(MessagingMainWindowDecision.absorbedWindowIDs(
+                bundleID: bid, windows: windowFacts, titleMatchesAppName: titleMatches))
             if main == nil || appWindows.count > 1 {
                 MessagingZoneDiagnostics.record(bundleID: bid, windows: appWindows, mainID: main?.id)
             }

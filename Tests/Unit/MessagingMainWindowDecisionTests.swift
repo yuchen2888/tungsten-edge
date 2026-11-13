@@ -105,4 +105,45 @@ final class MessagingMainWindowDecisionTests: XCTestCase {
         )
         XCTAssertEqual(id, "n")
     }
+
+    // MARK: - 自用改版：并进图标的窗口（冷启动残留的同名登录窗不单独出卡）
+
+    func testLingeringLoginWindowIsAbsorbedWithMainWindow() {
+        let ids = MessagingMainWindowDecision.absorbedWindowIDs(
+            bundleID: wechat,
+            windows: [W(id: "login", title: "微信", area: 700 * 640),
+                      W(id: "main", title: "微信", area: 1220 * 870),
+                      W(id: "browser", title: "微信 (窗口)", area: 1000 * 800)],
+            titleMatchesAppName: { $0 == "微信" }
+        )
+        XCTAssertEqual(ids, ["login", "main"], "残留登录窗并进图标；浏览器窗照常单独出卡")
+    }
+
+    func testMinimizedSameNameWindowKeepsItsOwnCard() {
+        let ids = MessagingMainWindowDecision.absorbedWindowIDs(
+            bundleID: wechat,
+            windows: [W(id: "big-minimized", title: "微信", isMinimized: true, area: 1220 * 870),
+                      W(id: "small-visible", title: "微信", area: 700 * 640)],
+            titleMatchesAppName: { $0 == "微信" }
+        )
+        XCTAssertEqual(ids, ["small-visible"], "被最小化的同名窗可能是真主窗口，留着卡片才能还原")
+    }
+
+    func testRuleTwoMainAbsorbsOnlyItself() {
+        let ids = MessagingMainWindowDecision.absorbedWindowIDs(
+            bundleID: telegram,
+            windows: [W(id: "only", title: "Saved Messages")],
+            titleMatchesAppName: { $0 == "Telegram" }
+        )
+        XCTAssertEqual(ids, ["only"])
+    }
+
+    func testNoMainAbsorbsNothing() {
+        let ids = MessagingMainWindowDecision.absorbedWindowIDs(
+            bundleID: wechat,
+            windows: [W(id: "a", title: "张三"), W(id: "b", title: "李四")],
+            titleMatchesAppName: { $0 == "微信" }
+        )
+        XCTAssertTrue(ids.isEmpty)
+    }
 }
