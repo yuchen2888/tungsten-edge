@@ -24,7 +24,10 @@ protocol UpdateControlling: AnyObject {
     var canCheckForUpdates: Bool { get }
     /// 定时检查发现的、还等着用户处理的版本号（`nil` = 没有）。状态栏用它显示提示。
     var pendingUpdateVersion: String? { get }
+    /// `pendingUpdateVersion` is downloaded and installs on relaunch.
+    var isPendingUpdateReadyToInstall: Bool { get }
     var automaticallyChecksForUpdates: Bool { get set }
+    var automaticallyDownloadsUpdates: Bool { get set }
     func checkForUpdates()
     /// 上面那些值变了就发一下，供上层转给界面。
     var changes: AnyPublisher<Void, Never> { get }
@@ -312,6 +315,19 @@ final class SettingsCoordinator: ObservableObject {
         updateService.pendingUpdateVersion
     }
 
+    var isPendingUpdateReadyToInstall: Bool {
+        updateService.isPendingUpdateReadyToInstall
+    }
+
+    /// The 「自动下载并安装更新」 checkbox; same no-mirror rule as `automaticallyChecksForUpdates`.
+    var automaticallyDownloadsUpdates: Bool {
+        get { updateService.automaticallyDownloadsUpdates }
+        set {
+            objectWillChange.send()
+            updateService.automaticallyDownloadsUpdates = newValue
+        }
+    }
+
     /// 设置窗口那个「自动检查更新」勾选项。
     ///
     /// 真值存在 Sparkle 那边，**不在 `AppSettingsStore` 里另存镜像**：两份状态必然漂，
@@ -337,14 +353,13 @@ final class SettingsCoordinator: ObservableObject {
         feedbackState.finish()
     }
 
-    /// 把 throws 吞成「一定有文案」，界面层不处理 error——和订阅同一约定。
-    /// 六项（正文 / 联系方式 / 版本 / macOS / 语言 / 附件）就是界面上披露的那六项，别多带。
-    /// 附件任一读不出来或传不上去 → 整单失败，界面据此保留草稿让用户重试。
-    /// 失败文案按真实成因分六种（`FeedbackFailure`）——所有失败都说「检查网络」会
-    /// 在限流、附件额度满这些场合把用户指向完全错误的方向。
+    /// Never throws: the pane always gets copy. Any attachment failure rejects the whole submission so
+    /// the draft survives for a retry. Failure copy follows the real cause (`FeedbackFailure`) — a blanket
+    /// "check your network" sends users the wrong way on rate limits and a full attachment quota.
     func performFeedback(
         message: String,
         contact: String,
+        diagnostics: String? = nil,
         attachments: [FeedbackAttachment] = []
     ) async -> FeedbackAlertContent {
         if let rejection = FeedbackDraftCheck.validate(message: message, contact: contact) {
@@ -358,6 +373,7 @@ final class SettingsCoordinator: ObservableObject {
             appVersion: versionTitle,
             macosVersion: ProcessInfo.processInfo.operatingSystemVersionString,
             lang: Bundle.main.preferredLocalizations.first ?? "en",
+            diagnostics: diagnostics,
             attachments: attachments
         )
         do {

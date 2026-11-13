@@ -282,6 +282,7 @@ struct SettingsWindowContent: View {
                     feedbackEditor
                         .scrollContentBackground(.hidden)
                     feedbackAttachmentRow(isEnabled: presentation.isEnabled)
+                    feedbackDiagnosticsControls(isEnabled: presentation.isEnabled)
                     feedbackContactRow(presentation)
                 } header: {
                     feedbackLeadIn
@@ -308,6 +309,7 @@ struct SettingsWindowContent: View {
                                 .stroke(Color(nsColor: .separatorColor), lineWidth: 1)
                         )
                     feedbackAttachmentRow(isEnabled: presentation.isEnabled)
+                    feedbackDiagnosticsControls(isEnabled: presentation.isEnabled)
                     feedbackContactRow(presentation)
                     feedbackDisclosure
                 }
@@ -322,12 +324,14 @@ struct SettingsWindowContent: View {
             systemForm {
                 aboutVersionRow
                 autoUpdateToggle
+                autoDownloadToggle
             }
             .padding(.bottom, Self.afterFormMargin)
         } else {
             settingsPane {
                 aboutVersionRow
                 autoUpdateToggle
+                autoDownloadToggle
             }
             .padding(Self.paneMargin)
         }
@@ -352,23 +356,70 @@ struct SettingsWindowContent: View {
                 .font(.caption).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        Toggle("Include Window Titles", isOn: Binding(
-            get: { diagnostics.includesTitles },
-            set: { diagnostics.setIncludesTitles($0); refreshDiagnostics() }
-        ))
+        diagnosticsTitlesToggle
         VStack(alignment: .leading, spacing: 8) {
-            DiagnosticsReportTextView(text: diagnostics.report ?? "")
-                .frame(height: Self.diagnosticsReportHeight)
-                .overlay {
-                    if diagnostics.isCollecting {
-                        ProgressView().controlSize(.small)
-                    }
-                }
+            diagnosticsReportBox
             diagnosticsActionRow
         }
         .onAppear {
             if diagnostics.report == nil { refreshDiagnostics() }
         }
+        recentIssuesSection
+    }
+
+    private var recentIssuesSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            if diagnostics.issueRows.isEmpty {
+                Text("Event Log")
+                Text("Tungsten Edge hasn't noticed anything unusual in the last two weeks.")
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text("Only problems Tungsten Edge can notice by itself are listed here.")
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else {
+                DisclosureGroup(isExpanded: $diagnostics.issuesExpanded) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        ForEach(Array(diagnostics.issueRows.prefix(20).enumerated()), id: \.offset) { _, entry in
+                            issueRow(entry)
+                        }
+                        if diagnostics.issueRows.count > 20 {
+                            Text(String(format: String(localized: "%d more — Copy Report includes all of them."), diagnostics.issueRows.count - 20))
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(.top, 4)
+                } label: {
+                    HStack {
+                        Text("Event Log")
+                        Spacer()
+                        Text(String(format: String(localized: "%d in the last two weeks"), diagnostics.issueRows.count))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+            Text("Problems Tungsten Edge doesn't notice itself, such as an extra cell, won't appear here. If you see one, click Copy Report while it's still on screen.")
+                .font(.caption).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private func issueRow(_ entry: IssueLogEntry) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            Text(issueRowText(entry))
+                .font(.callout)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 8)
+            Text(entry.kind.statusLabel)
+                .font(.caption).foregroundStyle(.secondary)
+        }
+    }
+
+    private func issueRowText(_ entry: IssueLogEntry) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MM-dd HH:mm"
+        return [formatter.string(from: entry.ts), AppDisplayNameResolver.displayName(for: entry.bundleID),
+                entry.kind.sentence, String(format: String(localized: "%d times"), entry.count)].joined(separator: " · ")
     }
 
     /// The report box keeps one height whether empty, collecting or full: content that grows
@@ -394,6 +445,9 @@ struct SettingsWindowContent: View {
     }
 
     private var diagnosticsStatusText: String {
+        if diagnostics.collectionFailed {
+            return String(localized: "Couldn’t collect diagnostics. Try collecting again.")
+        }
         guard !diagnostics.isCollecting, let collectedAt = diagnostics.collectedAt else {
             return String(localized: "Collecting…")
         }
@@ -402,10 +456,7 @@ struct SettingsWindowContent: View {
     }
 
     private func refreshDiagnostics() {
-        guard let request = diagnostics.begin() else { return }
-        collectDiagnostics(request.includesTitles) { text in
-            diagnostics.complete(request, text: text)
-        }
+        diagnostics.collect(using: collectDiagnostics)
     }
 
     private func copyDiagnostics() {
@@ -670,16 +721,29 @@ struct SettingsWindowContent: View {
         )
     }
 
-    /// 应用内反馈表单（2026-08-24，同日拎成独立标签页）：类型三选一 + 随类型变的引导
-    /// 文字 + 正文 + 选填联系方式 → 官网 `/api/feedback` → D1，owner 在本机控制台看。
-    /// 为什么不是 GitHub / mailto：国内用户打不开 GitHub，mailto 依赖装好的邮件客户端。
+    /// Off → back to asking before each download. Sparkle downloads only on automatic checks, so the
+    /// box is greyed out while those are off. 「并安装」 is in the label because a downloaded update
+    /// always installs when the app quits.
+    private var autoDownloadToggle: some View {
+        Toggle(
+            "Download and install updates automatically",
+            isOn: Binding(
+                get: { coordinator.automaticallyDownloadsUpdates },
+                set: { coordinator.automaticallyDownloadsUpdates = $0 }
+            )
+        )
+        .disabled(!coordinator.automaticallyChecksForUpdates)
+    }
+
+    /// Feedback pane: category + message + attachments + optional diagnostics + contact → `/api/feedback`.
     ///
-    /// ⚠️ **所有高度固定**（TextEditor 定高 140pt；placeholder 是 overlay，不占布局；
-    /// 附件区定高 44pt 且**始终渲染**，加到 3 个也不换行；发送后清空不改布局），
-    /// 结果一律走 `SettingsAlert`——窗口只在 `present()`、license sink 和切页时量高度，
-    /// 就地长出状态行或让附件把 pane 顶高，都只会变成可滚动。
-    /// ⚠️ 披露行必须与实际发送的内容一致（六项：正文 / 联系方式 / 版本 / macOS / 语言 / 附件）；
-    /// 类型并入 message（`FeedbackComposition` 是组装唯一入口），不是独立字段。
+    /// ⚠️ Every height is fixed (editor 140pt, placeholder is an overlay, the attachment row is always
+    /// rendered at 44pt, results go through `SettingsAlert`): the window only re-measures on `present()`,
+    /// tab switches, the license sink and the `includesDiagnostics` sink, so anything that grows in place
+    /// just turns the pane scrollable. The diagnostics block is the one part that changes height, and it
+    /// does so only through that checkbox.
+    /// ⚠️ The disclosure line must list exactly what is sent; the category rides inside `message`
+    /// (`FeedbackComposition` is the only assembler), not as a separate field.
     private var feedbackLeadIn: some View {
         Text("Ran into a problem or have an idea? Write to us here.")
             .font(.callout)
@@ -724,12 +788,71 @@ struct SettingsWindowContent: View {
                 .disabled(
                     !presentation.isEnabled
                         || feedbackDraft.message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                        || !diagnostics.canSendFeedback(includingDiagnostics: feedbackDraft.includesDiagnostics)
                 )
         }
     }
 
+    private var feedbackDiagnosticsStatus: String {
+        guard !diagnostics.canSendFeedback(includingDiagnostics: feedbackDraft.includesDiagnostics) else { return "" }
+        return diagnostics.collectionFailed
+            ? String(localized: "Couldn’t collect diagnostics. Try collecting again.")
+            : String(localized: "Collecting diagnostics…")
+    }
+
+    @ViewBuilder
+    private func feedbackDiagnosticsControls(isEnabled: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Toggle("Attach Diagnostics", isOn: Binding(
+                get: { feedbackDraft.includesDiagnostics },
+                set: {
+                    feedbackDraft.includesDiagnostics = $0
+                    diagnostics.discardReport()
+                    if $0 { refreshDiagnostics() }
+                }
+            ))
+            .toggleStyle(.checkbox)
+            if feedbackDraft.includesDiagnostics {
+                diagnosticsTitlesToggle
+                diagnosticsReportBox
+                HStack(alignment: .firstTextBaseline) {
+                    Text(feedbackDiagnosticsStatus)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
+                    Button("Collect Again", action: refreshDiagnostics)
+                        .disabled(diagnostics.isCollecting)
+                }
+            }
+        }
+        .disabled(!isEnabled)
+        .onAppear {
+            if feedbackDraft.includesDiagnostics, diagnostics.report == nil, !diagnostics.collectionFailed {
+                refreshDiagnostics()
+            }
+        }
+    }
+
+    private var diagnosticsTitlesToggle: some View {
+        Toggle("Include Window Titles", isOn: Binding(
+            get: { diagnostics.includesTitles },
+            set: { diagnostics.setIncludesTitles($0); refreshDiagnostics() }
+        ))
+    }
+
+    private var diagnosticsReportBox: some View {
+        DiagnosticsReportTextView(text: diagnostics.report ?? "")
+            .frame(height: Self.diagnosticsReportHeight)
+            .overlay {
+                if diagnostics.isCollecting {
+                    ProgressView().controlSize(.small)
+                }
+            }
+    }
+
     private var feedbackDisclosure: some View {
-        Text("Only your message, the contact you enter, the app version, your macOS version, the interface language and the attachments you add (kept for at most 90 days) are sent.")
+        Text("Only your message, the contact you enter, the app version, your macOS version, the interface language, the attachments you add (kept for at most 90 days) and diagnostics you choose to attach (app list and window state) are sent.")
             .font(.caption)
             .foregroundStyle(.secondary)
             .fixedSize(horizontal: false, vertical: true)
@@ -812,6 +935,7 @@ struct SettingsWindowContent: View {
     ]
 
     private func submitFeedback() {
+        guard diagnostics.canSendFeedback(includingDiagnostics: feedbackDraft.includesDiagnostics) else { return }
         // 先组装再上锁：空正文直接返回，不占 submitting 状态（按钮 disabled 已挡，这里兜底）。
         guard let composed = FeedbackComposition.compose(
             category: feedbackDraft.category, message: feedbackDraft.message
@@ -819,9 +943,11 @@ struct SettingsWindowContent: View {
         guard coordinator.beginFeedback() else { return }
         let contact = feedbackDraft.contact
         let attachments = feedbackDraft.attachments
+        // Capture exactly the displayed generation before the asynchronous submission starts.
+        let report = feedbackDraft.includesDiagnostics ? diagnostics.report : nil
         Task {
             let content = await coordinator.performFeedback(
-                message: composed, contact: contact, attachments: attachments
+                message: composed, contact: contact, diagnostics: report, attachments: attachments
             )
             coordinator.finishFeedback()
             // 失败时草稿**全保留**（含附件列表）：40MB 重选一遍是很实在的惩罚。

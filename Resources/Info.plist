@@ -38,6 +38,10 @@
   <!-- 自用改版：关掉自动检查，免得官方更新把本地修改覆盖掉。 -->
   <key>SUEnableAutomaticChecks</key>
   <false/>
+  <!-- 自用改版：关掉后台自动下载安装。官方包用的是同一把 EdDSA 公钥，下载下来会被当成合法更新、
+       退出时自动装上，把本地修改整个覆盖掉。 -->
+  <key>SUAutomaticallyUpdate</key>
+  <false/>
   <!-- 定时检查的间隔，6 小时。Sparkle 不设这个键时默认一天一次，于是发版当天用户基本
        不会被告知（owner 2026-08-20 实测：只有手点「检查更新」才知道有新版）。
        这只是初始值，用户改过的值由 Sparkle 自己存进偏好，我们代码里不写 updateCheckInterval。 -->
