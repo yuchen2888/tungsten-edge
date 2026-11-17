@@ -10,11 +10,10 @@
 # cannot compile it.
 name: CI
 
+# 自用改版：不再随推送自动运行（Build App 出包前已跑守护测试；免费仓库排 macOS 机器常失败、
+# 每次都发失败邮件）。需要时在 Actions 页面手动点 Run workflow。
 on:
-  push:
-    branches: ['**']
-  pull_request:
-    branches: [master]
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}

@@ -137,6 +137,15 @@ final class AppMembershipProjectionTests: XCTestCase {
         XCTAssertFalse(AppMembershipProjection.stripCardCanStash(bundleID: "", isDrawerMember: false))
     }
 
+    func testDrawerAppsHaveNoStableStripRank() {
+        let ranked = AppMembershipProjection.stableRankedKeptIDs(
+            keptIDs: ["kept", "drawer", "msg", "kept2"],
+            isMessaging: { $0 == "msg" },
+            isInDrawer: { $0 == "drawer" })
+        XCTAssertEqual(ranked, ["kept", "kept2"],
+                       "从抽屉打开的应用不按保留名次插到主栏中间，而是和普通应用一样排到最右边")
+    }
+
     // MARK: - 最近关闭（自用改版：固定 2 格，新退出的排第一，最旧的被挤掉）
 
     func testRecordingQuitsPutsNewestFirstAndCaps() {

@@ -163,6 +163,18 @@ enum AppMembershipProjection {
         !bundleID.isEmpty && !isDrawerMember && !isMessagingZoneMember
     }
 
+    /// 哪些保留应用在主栏上有「长期排名」（`StripOrderStore.stableKeptRanks`：无位置记忆的卡按名次落位）。
+    /// 抽屉成员不参与：拖进抽屉会自动勾上保留，若仍按名次落位，从抽屉打开的应用就会插到主栏中间
+    /// （owner 2026-11-17 报）；不参与名次后，它们和从程序列表打开的应用一样排到窗口区最右边。
+    /// 消息区成员不参与（原有规则：它们的顺序归消息区自己管）。
+    static func stableRankedKeptIDs(
+        keptIDs: [String],
+        isMessaging: (String) -> Bool,
+        isInDrawer: (String) -> Bool
+    ) -> [String] {
+        keptIDs.filter { !isMessaging($0) && !isInDrawer($0) }
+    }
+
     /// 主栏上的窗口卡能否拖进抽屉收纳。抽屉成员的卡不行：它已经在抽屉里，
     /// 而收纳预览拖出时的撤销会 `drawer.remove`，把它误踢出抽屉。
     static func stripCardCanStash(bundleID: String?, isDrawerMember: Bool) -> Bool {

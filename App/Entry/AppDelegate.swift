@@ -31,8 +31,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let keptAppStore = KeptAppStore()
     lazy var stripOrderStore = StripOrderStore(
         keptIDsProvider: { [keptAppStore] in Set(keptAppStore.bundleIDs) },
-        stableKeptOrderProvider: { [keptAppStore, messagingStore] in
-            keptAppStore.bundleIDs.filter { !messagingStore.contains($0) }
+        stableKeptOrderProvider: { [keptAppStore, messagingStore, drawerStore] in
+            AppMembershipProjection.stableRankedKeptIDs(
+                keptIDs: keptAppStore.bundleIDs,
+                isMessaging: { messagingStore.contains($0) },
+                isInDrawer: { drawerStore.contains($0) }
+            )
         },
         inventoryLog: inventoryLog
     )
