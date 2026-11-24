@@ -38,9 +38,8 @@ struct WindowChipTitleLabel: View {
     let sizing: ChipLabelSizing
     let chipID: String
     @Environment(\.layoutAnimationResetToken) private var animationResetToken
-    // 自用改版：随盒宽动画一起提速（原 0.16 / 0.34+0.14）。总长仍短于盒宽动画（0.06+0.18 < 0.25）。
-    private static let labelRemoval: Animation = .easeOut(duration: 0.10)
-    private static let labelInsertion: Animation = .easeOut(duration: 0.18).delay(0.06)
+    private static let labelRemoval: Animation = .easeOut(duration: 0.16)
+    private static let labelInsertion: Animation = .easeOut(duration: 0.34).delay(0.14)
     private static let labelInsertionOffset: CGFloat = 3
 
     var body: some View {
@@ -116,9 +115,7 @@ enum LabelWidthAnimation {
         let c1x: Double, c1y: Double, c2x: Double, c2y: Double
     }
 
-    /// 自用改版（2026-11-24）：原为 0.60s、起点缓（0.5,0 / 0.15,1），微信这类频繁弹出的带标题窗口卡
-    /// 展开 / 收起显得拖沓。改为 0.25s 的标准缓出。
-    static let defaultCurve = Curve(duration: 0.25, c1x: 0.25, c1y: 0.1, c2x: 0.25, c2y: 1)
+    static let defaultCurve = Curve(duration: 0.60, c1x: 0.5, c1y: 0, c2x: 0.15, c2y: 1)   // owner 2026-09-13：起点缓、整体长
     static let curve: Curve = parse(DebugSwitch.labelAnim.value()) ?? defaultCurve
 
     static var swiftUI: Animation {
