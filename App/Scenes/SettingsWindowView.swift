@@ -98,50 +98,35 @@ struct SettingsWindowContent: View {
     /// fill and dividers follow each OS release; macOS 12 has no grouped form and keeps the
     /// hand-built layouts in the `else` branches.
     ///
-    /// 「通用」页: three boxes — app-wide (scroll reversal included: it acts system-wide),
-    /// Taskbar, Keyboard Shortcuts; label leading, control trailing — with the setup-guide
-    /// entry under them. Rows carry no grey note; the one
-    /// disclosure this page owes (scroll reversal) sits behind that row's help button.
+    /// 「通用」页: one box — label leading, control trailing — with the setup-guide entry under
+    /// it. Rows carry no grey note; the one disclosure this page owes (scroll reversal) sits
+    /// behind that row's help button.
     @ViewBuilder
     private var generalPane: some View {
         if #available(macOS 13.0, *) {
             VStack(alignment: .trailing, spacing: 0) {
                 systemForm {
-                    Section {
-                        languagePicker
-                        // Plain stacks, not `LabeledContent`: that aligns on the text baseline,
-                        // which an AppKit-backed control lacks — the recorder drops below its
-                        // own label.
-                        HStack {
-                            Text("Appearance")
-                            Spacer(minLength: 12)
-                            appearanceCards
-                        }
-                        // System-wide, not a taskbar setting — it stays out of the Taskbar box.
-                        HStack {
-                            scrollReverserLabel
-                            Spacer(minLength: 12)
-                            scrollReverserToggle
-                                .toggleStyle(.switch)
-                                .labelsHidden()
-                        }
+                    languagePicker
+                    // Plain stacks, not `LabeledContent`: that aligns on the text baseline, which
+                    // an AppKit-backed control lacks — the recorder drops below its own label.
+                    HStack {
+                        Text("Appearance")
+                        Spacer(minLength: 12)
+                        appearanceCards
                     }
-                    // Headers as `Text`: Scripts/check_localization.py scans `Text(` literals,
-                    // not `Section(`.
-                    Section {
-                        frontWindowBarToggle
+                    frontWindowBarToggle
+                        .toggleStyle(.switch)
+                    HStack {
+                        Text("Show/hide taskbar shortcut")
+                        Spacer(minLength: 12)
+                        hotKeyControls
+                    }
+                    HStack {
+                        scrollReverserLabel
+                        Spacer(minLength: 12)
+                        scrollReverserToggle
                             .toggleStyle(.switch)
-                    } header: {
-                        Text("Taskbar")
-                    }
-                    Section {
-                        HStack {
-                            Text("Show/hide taskbar")
-                            Spacer(minLength: 12)
-                            hotKeyControls
-                        }
-                    } header: {
-                        Text("Keyboard Shortcuts")
+                            .labelsHidden()
                     }
                 }
                 welcomeGuideButton
@@ -166,33 +151,27 @@ struct SettingsWindowContent: View {
                     }
                     Divider().opacity(0.5)
                     groupRow {
+                        Text("Mark the active window with a bar")
+                    } control: {
+                        frontWindowBarToggle
+                            .toggleStyle(.switch)
+                            .controlSize(.small)
+                            .labelsHidden()
+                    }
+                    Divider().opacity(0.5)
+                    groupRow {
+                        Text("Show/hide taskbar shortcut")
+                    } control: {
+                        hotKeyControls
+                    }
+                    Divider().opacity(0.5)
+                    groupRow {
                         scrollReverserLabel
                     } control: {
                         scrollReverserToggle
                             .toggleStyle(.switch)
                             .controlSize(.small)
                             .labelsHidden()
-                    }
-                }
-                settingsSection("Taskbar") {
-                    settingsGroup {
-                        groupRow {
-                            Text("Mark the active window with a bar")
-                        } control: {
-                            frontWindowBarToggle
-                                .toggleStyle(.switch)
-                                .controlSize(.small)
-                                .labelsHidden()
-                        }
-                    }
-                }
-                settingsSection("Keyboard Shortcuts") {
-                    settingsGroup {
-                        groupRow {
-                            Text("Show/hide taskbar")
-                        } control: {
-                            hotKeyControls
-                        }
                     }
                 }
                 HStack {
@@ -225,6 +204,9 @@ struct SettingsWindowContent: View {
     /// Bottom padding for a pane that ends with its form.
     private static let afterFormMargin = paneMargin - systemFormMargin
 
+    // 「高级」= 需要额外能力、默认就对、基本不用碰的开关。单独一页不是为了藏，
+    // 而是让常用页只留日常会调的东西；真想拒绝这个能力的人找得到（owner 2026-08-09，
+    // 2026-08-24 分页时 owner 确认保留「高级」这一页）。
     @ViewBuilder
     private var advancedPane: some View {
         if #available(macOS 13.0, *) {
@@ -236,34 +218,12 @@ struct SettingsWindowContent: View {
                         .fixedSize(horizontal: false, vertical: true)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                Section {
-                    fixedWindowLabelWidthToggle
-                        .toggleStyle(.switch)
-                    windowLabelWidthControls
-                } header: {
-                    Text("Customization")
-                }
             }
             .padding(.bottom, Self.afterFormMargin)
         } else {
             settingsPane {
                 settingRow(note: fullscreenIntentNote) {
                     fullscreenIntentToggle
-                }
-                settingsSection("Customization") {
-                    settingsGroup {
-                        groupRow {
-                            Text("Fixed window label width")
-                        } control: {
-                            fixedWindowLabelWidthToggle
-                                .toggleStyle(.switch)
-                                .controlSize(.small)
-                                .labelsHidden()
-                        }
-                        Divider().opacity(0.5)
-                        windowLabelWidthControls
-                            .padding(.vertical, 11)
-                    }
                 }
             }
             .padding(Self.paneMargin)
@@ -278,31 +238,6 @@ struct SettingsWindowContent: View {
                 set: store.setFullscreenIntentEnabled
             )
         )
-    }
-
-    private var fixedWindowLabelWidthToggle: some View {
-        Toggle("Fixed window label width", isOn: binding(
-            get: { store.fixedWindowLabelWidth },
-            set: coordinator.setFixedWindowLabelWidth))
-    }
-
-    private var windowLabelWidthControls: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Text("Window label width")
-                Spacer(minLength: 8)
-                Button("Reset") { coordinator.setWindowLabelWidth(.default) }
-                    .controlSize(.small)
-                    .disabled(store.windowLabelWidth == .default)
-            }
-            HStack(spacing: 8) {
-                Text("Narrow").font(.caption).fixedSize()
-                WindowLabelWidthSlider(width: store.windowLabelWidth, coordinator: coordinator)
-                    .frame(minWidth: 80, maxWidth: .infinity)
-                    .frame(height: 26)
-                Text("Wide").font(.caption).fixedSize()
-            }
-        }
     }
 
     private var fullscreenIntentNote: String {
@@ -764,6 +699,12 @@ struct SettingsWindowContent: View {
                     .foregroundStyle(.secondary)
             }
             Spacer()
+            // Sparkle 自带结果界面（有新版 / 已是最新 / 查不到），所以这里不再接
+            // `SettingsAlert`——原来那条「去官网手动下载」的提示随之删掉了。
+            Button("Check for Updates…") {
+                coordinator.checkForUpdates()
+            }
+            .disabled(!coordinator.canCheckForUpdates)
         }
     }
 
@@ -1118,19 +1059,6 @@ struct SettingsWindowContent: View {
             content()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    /// macOS 12 stand-in for a grouped form's titled `Section`: the title sits above its box.
-    private func settingsSection<Content: View>(
-        _ title: LocalizedStringKey,
-        @ViewBuilder content: () -> Content
-    ) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(title)
-                .font(.headline)
-                .padding(.leading, 4)
-            content()
-        }
     }
 
     /// macOS 12 stand-in for the grouped form's box: rows stacked edge to edge, a `Divider()`

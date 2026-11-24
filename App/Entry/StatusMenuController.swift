@@ -1,6 +1,5 @@
 import AppKit
 import Combine
-import SwiftUI
 
 @MainActor
 final class StatusMenuController: NSObject, NSMenuDelegate {
@@ -46,21 +45,20 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
     /// 设置窗口不再放（仍不重复）。别再挪回设置窗口，除非 owner 再开口。
     private let launchAtLoginItem = NSMenuItem(title: String(localized: "Open at Login"), action: #selector(toggleLaunchAtLogin), keyEquivalent: "")
     private let openLoginItemsSettingsItem = NSMenuItem(title: String(localized: "Open Login Items Settings…"), action: #selector(openLoginItemsSettings), keyEquivalent: "")
-    /// The menu's one update row, always present: 「检查更新…」, or 「安装 vX.Y.Z…」 with a red dot
-    /// while an update waits — the dot has to be seen even when nobody went looking. Both
-    /// states run the same Sparkle check, and swapping text instead of adding a row keeps the
-    /// menu's height fixed while it is on screen (a taskbar-anchored menu would drift).
-    private let updateItem = NSMenuItem(title: String(localized: "Check for Updates…"), action: #selector(checkForUpdates), keyEquivalent: "")
+    /// 「安装 vX.Y.Z…」：**只在有待装新版时可见**（2026-08-24 菜单去重）。登录项、检查更新、
+    /// 版本号都只住设置窗口了；这一行是菜单里唯一的更新表面，因为它是一条**消息**不是命令——
+    /// 红点要在用户没主动去查的时候也能被看见。可见性只允许在 `prepareMenuForPresentation`
+    /// 翻转（菜单开着时增删行会让任务条锚点漂移，见 refreshInstallUpdateItem）。
+    private let installUpdateItem = NSMenuItem(title: "", action: #selector(installPendingUpdate), keyEquivalent: "")
     /// 钨极组的分组标题，恒不可点（title 在 refreshEdgeSectionTitle 里随热键注册状态落）。
     private let edgeSectionItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
-    private let edgeSectionHeader = MenuStaticSectionHeaderView(title: "")
     // 中转站 / 悬停显示应用名 / 最大化避让 / 任务条大小 2026-09-01 从设置窗口搬回菜单
     // （owner 拍板，反转 2026-08-03 的分工）：它们是调外观时随手要切的，为此开一次窗不值。
     // 四项并进钨极组（不另起帽子），与「单/多屏模式 ▸」同组。
+    // 登录项 / 检查更新 / 版本号仍按 2026-08-24 的去重结果：只在设置窗口。
 
     /// 分组标题，恒不可点（title 在 configureMenu 里落）。
     private let nativeDockSectionItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
-    private let nativeDockSectionHeader = MenuStaticSectionHeaderView(title: AutoHideToggleMenuModel.nativeDockSectionTitle)
     /// 滑块草稿的唯一提交入口，默认隐藏。承载的是**真按钮**而不是普通菜单文字行：
     /// 做成菜单行时它和邻居（「打开系统 Dock 设置…」）视觉权重一样，混在菜单里不显眼，
     /// 而用户刚拖完滑块视线还在滑块上，错过它就从「会闪但生效了」变成
@@ -73,26 +71,16 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
     /// 屏幕数变化不会改主菜单高度，任务条那条按左上角定位的路径就不会漂。
     /// 整行的显隐只允许在 `prepareMenuForPresentation` 翻转（菜单开着时增删行的老规矩）。
     private let taskbarScreenItem = NSMenuItem(title: String(localized: "Single/Multi-Display Mode"), action: nil, keyEquivalent: "")
-    /// Shown and hidden together with `taskbarScreenItem`: alone it would sit right under the
-    /// separator above this block and draw two lines in a row.
-    private let taskbarScreenSeparator = NSMenuItem.separator()
     /// **刻意不设 delegate**：`menuWillOpen` / `menuDidClose` 不区分 menu 参数，
     /// 子菜单一开一关会被当成主菜单开关，提前解除边缘自动隐藏抑制。内容改为在父菜单
     /// 显示前（`prepareMenuForPresentation`）建好。
     private let taskbarScreenMenu = NSMenu()
-    /// The parent row's icon, swapped from the main menu's own `willHighlight`.
-    private let taskbarScreenParentIconSwapper = MenuGlassIconSwapper()
-    /// Always present (rows must not be added or removed while the menu is up); state lands in
-    /// `refreshTaskbarPreferenceStates`.
-    private lazy var taskbarToggleTiles = MenuToggleTileRowView(specs: [
-        MenuToggleTileSpec(glyph: .shelf, shortTitle: String(localized: "Shelf"), fullTitle: String(localized: "Show Shelf")) { [weak self] in self?.toggleShowShelf() },
-        MenuToggleTileSpec(glyph: .trash, shortTitle: String(localized: "Trash"), fullTitle: String(localized: "Show Trash")) { [weak self] in self?.toggleShowTrash() },
-        MenuToggleTileSpec(glyph: .hoverName, shortTitle: String(localized: "Name on Hover"), fullTitle: String(localized: "Show app name on hover")) { [weak self] in self?.toggleHoverName() },
-        MenuToggleTileSpec(glyph: .avoidTaskbar, shortTitle: String(localized: "Avoid Taskbar"), fullTitle: String(localized: "Keep maximized windows above the taskbar")) { [weak self] in self?.toggleWindowLift() },
-    ])
-    /// 自用改版：最近关闭区的开关。作者的玻璃按钮行是定制图标、四格已满（他试过第五格又撤了），
-    /// 所以做成普通勾选项，紧挨在按钮行下面。
+    /// 下面四条是普通勾选项，**恒在**（菜单开着时不许增删行），勾选状态由 refreshCheckmarks 落。
+    private let showShelfItem = NSMenuItem(title: String(localized: "Show Shelf"), action: #selector(toggleShowShelf), keyEquivalent: "")
+    private let showTrashItem = NSMenuItem(title: String(localized: "Show Trash"), action: #selector(toggleShowTrash), keyEquivalent: "")
     private let showRecentlyQuitItem = NSMenuItem(title: String(localized: "Show Recently Quit Apps"), action: #selector(toggleShowRecentlyQuit), keyEquivalent: "")
+    private let hoverNameItem = NSMenuItem(title: String(localized: "Show app name on hover"), action: #selector(toggleHoverName), keyEquivalent: "")
+    private let windowLiftItem = NSMenuItem(title: String(localized: "Keep maximized windows above the taskbar"), action: #selector(toggleWindowLift), keyEquivalent: "")
     private let nativeDockSliderView: PreferenceSliderMenuItemView
     private let edgeSliderView: PreferenceSliderMenuItemView
     /// Hat and row of the taskbar height slider; the same value as the grip on the bar.
@@ -127,7 +115,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         configureStatusItem()
         configureMenu()
         refreshCheckmarks()
-        refreshUpdateItem()
+        refreshInstallUpdateItem(allowsLayoutChange: true)
         // 钨极滑块是即时生效的本地值：⌥⇧⌘D、设置窗口都可能在菜单开着时改它，滑块要跟着动。
         // sink 用 publisher 发出的新值：@Published 在赋值完成前发布，此刻回读 store 是旧值。
         //
@@ -146,7 +134,9 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
             .sink { [weak self] _ in
                 guard let self else { return }
                 self.refreshStatusItemBadge()
-                self.refreshUpdateItem()
+                // 文字与可用态可以随时跟着变；**行的显隐不行**——菜单开着时增删行，
+                // 任务条那条路径按左上角定位，底边会从任务条上沿漂走（行数不变规则）。
+                self.refreshInstallUpdateItem(allowsLayoutChange: !self.isMenuOpen)
             }
         refreshStatusItemBadge()
         refreshSystemTruth()
@@ -193,9 +183,8 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         menu.addItem(.separator())
 
         // 钨极组排在系统 Dock 组之前——这是钨极自己的菜单，自家的设置在前。
-        // 两组都有独立的静态组标题当"帽子"：从前只有系统 Dock 有，整个菜单只有一顶帽子在上面，
+        // 两组都有灰色组标题当"帽子"：从前只有系统 Dock 有，整个菜单只有一顶帽子在上面，
         // 于是它下面的钨极命令看起来也归它管（owner 2026-08-03 反馈）。
-        edgeSectionItem.view = edgeSectionHeader
         edgeSectionItem.isEnabled = false
         menu.addItem(edgeSectionItem)
 
@@ -217,6 +206,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         let edgeItem = NSMenuItem()
         edgeItem.view = edgeSliderView
         menu.addItem(edgeItem)
+        menu.addItem(.separator())
 
         // Live on both entry points, the taskbar-anchored menu included: the bar grows under
         // the menu or leaves a gap below it, but never disappears from under it the way a
@@ -224,21 +214,18 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         taskbarSizeSectionItem.attributedTitle = Self.sectionTitle(String(localized: "Taskbar Size"))
         taskbarSizeSectionItem.isEnabled = false
         menu.addItem(taskbarSizeSectionItem)
-        taskbarSizeSliderView.onEditingBegan = { [weak self] in
-            self?.settingsCoordinator.beginTaskbarHeightEditing()
+        taskbarSizeSliderView.onEditingChanged = { [weak self] editing in
+            self?.settingsCoordinator.setTaskbarHeightEditing(editing)
         }
-        taskbarSizeSliderView.onEditingEnded = { [weak self] token in
-            self?.settingsCoordinator.endTaskbarHeightEditing(token: token)
-        }
-        taskbarSizeSliderView.onHeightChange = { [weak self] height, token in
-            self?.settingsCoordinator.setTaskbarHeight(height, token: token)
+        taskbarSizeSliderView.onHeightChange = { [weak self] height in
+            self?.settingsCoordinator.setTaskbarHeight(height)
         }
         let taskbarSizeItem = NSMenuItem()
         taskbarSizeItem.view = taskbarSizeSliderView
         menu.addItem(taskbarSizeItem)
         menu.addItem(.separator())
 
-        nativeDockSectionItem.view = nativeDockSectionHeader
+        nativeDockSectionItem.attributedTitle = Self.sectionTitle(AutoHideToggleMenuModel.nativeDockSectionTitle)
         nativeDockSectionItem.isEnabled = false
         menu.addItem(nativeDockSectionItem)
 
@@ -273,14 +260,19 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         taskbarScreenItem.submenu = taskbarScreenMenu
         taskbarScreenItem.isHidden = true
         menu.addItem(taskbarScreenItem)
-        taskbarScreenSeparator.isHidden = true
-        menu.addItem(taskbarScreenSeparator)
 
-        let taskbarTogglesItem = NSMenuItem()
-        taskbarTogglesItem.view = taskbarToggleTiles
-        menu.addItem(taskbarTogglesItem)
+        // 四个开关。设置窗口里它们各带一行灰色说明，菜单里没有副标题的位置，
+        // 说明随搬家一并删除（owner 2026-09-01 拍板接受这个代价）。
+        showShelfItem.target = self
+        menu.addItem(showShelfItem)
+        showTrashItem.target = self
+        menu.addItem(showTrashItem)
         showRecentlyQuitItem.target = self
         menu.addItem(showRecentlyQuitItem)
+        hoverNameItem.target = self
+        menu.addItem(hoverNameItem)
+        windowLiftItem.target = self
+        menu.addItem(windowLiftItem)
         menu.addItem(.separator())
         #if DEBUG
         let debugMenu = NSMenu()
@@ -298,6 +290,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
 
         // 「设置…」和「退出」归为底部一组（owner 2026-08-03）：菜单栏应用的普遍习惯是
         // 把这类"进另一个界面"的入口放在下面，上面留给随手切的开关。
+        // 登录项 / 检查更新 / 版本号已于 2026-08-24 去重，只留设置窗口。
         settingsItem.target = self
         settingsItem.keyEquivalentModifierMask = [.command]
         menu.addItem(settingsItem)
@@ -307,10 +300,9 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         openNativeDockSettingsItem.target = self
         menu.addItem(openNativeDockSettingsItem)
 
-        updateItem.target = self
-        menu.addItem(updateItem)
-        // 自用改版：隐藏。官方包用同一把 EdDSA 公钥，手动检查一点「安装」就会被官方版覆盖。
-        updateItem.isHidden = true
+        installUpdateItem.target = self
+        installUpdateItem.isHidden = true
+        menu.addItem(installUpdateItem)
 
         let quitItem = NSMenuItem(title: String(localized: "Quit Tungsten Edge"), action: #selector(quit), keyEquivalent: "q")
         quitItem.target = self
@@ -344,19 +336,10 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         isMenuOpen = false
         isPresentedFromTaskbar = false
         // A menu dismissed mid-drag must not leave the bars in the resize transaction.
-        taskbarSizeSliderView.finishEditing()
+        settingsCoordinator.setTaskbarHeightEditing(false)
         onMenuVisibilityChanged(false)
         // 关闭后再预热一次；所有结果只进缓存，供下次展示直接使用。
         refreshSystemTruth()
-    }
-
-    /// Backstop for the tile row's own `mouseExited`, which a fast pointer can skip: the menu
-    /// always moves its highlight off the row once the pointer is elsewhere.
-    func menu(_ menu: NSMenu, willHighlight item: NSMenuItem?) {
-        if item?.view !== taskbarToggleTiles {
-            taskbarToggleTiles.clearHover()
-        }
-        taskbarScreenParentIconSwapper.highlight(item)
     }
 
     func menuWillOpen(_ menu: NSMenu) {
@@ -376,7 +359,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         permissionWarningItem.isHidden = granted
         permissionWarningSeparator.isHidden = granted
         refreshCheckmarks()
-        refreshUpdateItem()
+        refreshInstallUpdateItem(allowsLayoutChange: true)
         // 没点确认就关菜单 = 作废：什么都不写，下次打开一切从系统真值重新起步。
         // （否则「随手拨一下看看」也会招来一次 killall Dock——关个菜单屏幕突然闪一下，
         // 正是这次要消除的怪异感。）
@@ -395,22 +378,6 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         rebuildTaskbarScreenMenu()
     }
 
-    /// The icon rides inside the title as a text attachment: on macOS 27 this menu draws no
-    /// `NSMenuItem.image` at all, and a custom view would lose keyboard selection and the native
-    /// submenu. Re-rendered on every open so it follows light / dark.
-    private func applyTaskbarScreenItemTitle() {
-        let title = String(localized: "Single/Multi-Display Mode")
-        let text = NSAttributedString(string: title, attributes: [.font: NSFont.menuFont(ofSize: 0)])
-        taskbarScreenParentIconSwapper.removeAll()
-        if !taskbarScreenParentIconSwapper.attach(.displays, before: text, isDark: isMenuDark, to: taskbarScreenItem) {
-            taskbarScreenItem.title = title
-        }
-    }
-
-    private var isMenuDark: Bool {
-        (menu.appearance ?? NSApp.effectiveAppearance).bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
-    }
-
     /// 重建「单/多屏模式 ▸」。**只从 `prepareMenuForPresentation` 调**——它是唯一
     /// 允许改行显隐的路径（菜单在屏时增删行会让任务条锚点漂移）。
     private func rebuildTaskbarScreenMenu() {
@@ -419,10 +386,6 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
             connectedScreens: connectedScreensCache
         )
         taskbarScreenItem.isHidden = presentation.isHidden
-        taskbarScreenSeparator.isHidden = presentation.isHidden
-        if !presentation.isHidden {
-            applyTaskbarScreenItemTitle()
-        }
         taskbarScreenMenu.removeAllItems()
         for row in presentation.rows {
             switch row {
@@ -487,7 +450,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
     /// 组标题**不设 `keyEquivalent`**：禁用行设了会被菜单捕获，还会让它看起来能点。
     /// ⌥⇧⌘D 只以纯文字写进标题，且只在 Carbon 注册成功时才提——注册失败时按不出来，写上去是骗人。
     private func refreshEdgeSectionTitle() {
-        edgeSectionHeader.updateTitle(
+        edgeSectionItem.attributedTitle = Self.sectionTitle(
             AutoHideToggleMenuModel.edgeSectionTitle(
                 isHotKeyRegistered: isToggleHotKeyRegistered(),
                 glyphs: hotKeyGlyphs()
@@ -532,16 +495,14 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         refreshTaskbarPreferenceStates()
     }
 
-    /// The four taskbar tiles. Only flips tile state — no rows added, removed or hidden — so it is
-    /// safe while the menu is tracking (not bound by `allowsLayoutChange`).
+    /// 钨极组四项的勾选。**只改 `state`，不增删行也不翻 `isHidden`**，
+    /// 所以菜单开着时调用也安全（不受 `allowsLayoutChange` 约束）。
     private func refreshTaskbarPreferenceStates() {
-        taskbarToggleTiles.setStates([
-            store.showShelf,
-            store.showTrash,
-            store.hoverStyle.isExpressive,
-            store.windowLiftEnabled,
-        ])
+        showShelfItem.state = store.showShelf ? .on : .off
+        showTrashItem.state = store.showTrash ? .on : .off
         showRecentlyQuitItem.state = store.showRecentlyQuit ? .on : .off
+        hoverNameItem.state = store.hoverStyle.isExpressive ? .on : .off
+        windowLiftItem.state = store.windowLiftEnabled ? .on : .off
     }
 
     private func refreshLaunchAtLoginState(allowsLayoutChange: Bool) {
@@ -557,36 +518,47 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         openLoginItemsSettingsItem.isHidden = !presentation.showsSettingsItem
     }
 
-    /// The only refresh of `updateItem`; text and enabled state only, so it is safe while the
-    /// menu is open.
-    private func refreshUpdateItem() {
+    /// 「安装 vX.Y.Z…」行的唯一刷新入口。`allowsLayoutChange` = 本次刷新可不可以改行的显隐：
+    /// 展示前（`prepareMenuForPresentation`）与菜单关着时可以，菜单开着时**不可以**——
+    /// 增删行会改菜单高度，任务条那条路径按左上角定位，底边会从任务条上沿漂走。
+    /// 迟一轮不要紧：下次 `prepareMenuForPresentation` 在菜单显示**之前**会补上。
+    private func refreshInstallUpdateItem(allowsLayoutChange: Bool) {
+        // 有一版在等着装的时候，这行直接写出版本号并挂一个红点（owner 2026-08-20 画的样子）——
+        // 「安装 0.9.2…」加个红点是一条消息；主动的「检查更新…」入口只在设置窗口（2026-08-24）。
         if let version = settingsCoordinator.pendingUpdateVersion {
             // Already downloaded → the click re-opens Sparkle's window whose main button relaunches.
             let isReady = settingsCoordinator.isPendingUpdateReadyToInstall
             let title = isReady
                 ? String(format: String(localized: "Restart to Update to %@…"), version)
                 : String(format: String(localized: "Install %@…"), version)
-            updateItem.title = title
-            updateItem.attributedTitle = Self.pendingUpdateTitle(title)
-            // VoiceOver should read the action, not the decorative dot.
-            updateItem.setAccessibilityLabel(
+            installUpdateItem.title = title
+            installUpdateItem.attributedTitle = Self.pendingUpdateTitle(title)
+            // 那个「●」在 VoiceOver 里会被念成「实心圆」，所以另给一句人话。
+            installUpdateItem.setAccessibilityLabel(
                 isReady
                     ? String(format: String(localized: "Restart to update to %@ — update downloaded"), version)
                     : String(format: String(localized: "Install %@ — update available"), version)
             )
+            // 可用态归 Sparkle：正在下载 / 安装时它自己会报 false，不再维护"在飞"标志。
+            installUpdateItem.isEnabled = settingsCoordinator.canCheckForUpdates
+            if allowsLayoutChange { installUpdateItem.isHidden = false }
         } else {
-            // ⚠️ attributedTitle must go back to nil: while it is set, assigning `title` does
-            // nothing and the row stays frozen on the last version number.
-            updateItem.attributedTitle = nil
-            updateItem.title = String(localized: "Check for Updates…")
-            updateItem.setAccessibilityLabel(nil)
+            // ⚠️ attributedTitle 必须清回 nil。留着的话 `title` 再怎么改都不生效，
+            // 这行会永远卡在上一次那个版本号上。
+            installUpdateItem.attributedTitle = nil
+            installUpdateItem.setAccessibilityLabel(nil)
+            if allowsLayoutChange { installUpdateItem.isHidden = true }
         }
-        // Sparkle owns availability: it reports false while a check, download or install runs.
-        updateItem.isEnabled = settingsCoordinator.canCheckForUpdates
     }
 
-    /// Disabled native submenu headings keep their secondary colour; the two main headings
-    /// use MenuStaticSectionHeaderView so AppKit cannot further fade their label colour.
+    /// 两条分组标题的样式。**必须走 `attributedTitle`**：组标题是 `action: nil` 的 disabled 项，
+    /// 没有 `textColor` 可设，系统按 disabled 画成菜单里最淡的一档，owner 2026-09-01 嫌太灰。
+    /// 加深到 `secondaryLabelColor`——比可点的菜单项弱，但看得清；**不要为了变黑把它改成
+    /// enabled**，那样鼠标划过会高亮成蓝条，而组标题不高亮是对的（owner 2026-08-04）。
+    ///
+    /// ⚠️ 字体必须显式给：`attributedTitle` 不给就掉成系统默认字号（同 `pendingUpdateTitle`）。
+    /// ⚠️ 设了 `attributedTitle` 之后**再赋 `title` 不生效**——所以 `refreshEdgeSectionTitle()`
+    /// 也得走这里，两处调用点不能只改一处。
     private static func sectionTitle(_ text: String) -> NSAttributedString {
         NSAttributedString(
             string: text,
@@ -728,33 +700,31 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         }
     }
 
-    // Tiles fire with the menu still open, so they refresh only their own state: the full
-    // `refreshCheckmarks()` may show or hide rows, which must not happen while the menu tracks.
-    private func toggleShowShelf() {
+    @objc private func toggleShowShelf() {
         store.setShowShelf(!store.showShelf)
-        refreshTaskbarPreferenceStates()
+        refreshCheckmarks()
     }
 
     @objc private func toggleShowRecentlyQuit() {
         store.setShowRecentlyQuit(!store.showRecentlyQuit)
-        refreshTaskbarPreferenceStates()
+        refreshCheckmarks()
     }
 
-    private func toggleShowTrash() {
+    @objc private func toggleShowTrash() {
         store.setShowTrash(!store.showTrash)
-        refreshTaskbarPreferenceStates()
+        refreshCheckmarks()
     }
 
     /// 悬停显示应用名 = `hoverStyle` 的两档（`.standard` 显示 / `.quiet` 不显示），
     /// 不是独立的布尔字段——设置窗口那版也是这么读写的，别在这里另开一个镜像。
-    private func toggleHoverName() {
+    @objc private func toggleHoverName() {
         store.setHoverStyle(store.hoverStyle.isExpressive ? .quiet : .standard)
-        refreshTaskbarPreferenceStates()
+        refreshCheckmarks()
     }
 
-    private func toggleWindowLift() {
+    @objc private func toggleWindowLift() {
         store.setWindowLiftEnabled(!store.windowLiftEnabled)
-        refreshTaskbarPreferenceStates()
+        refreshCheckmarks()
     }
 
     @objc private func openLoginItemsSettings() {
@@ -763,9 +733,9 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
 
     /// Sparkle 自带全套结果界面，而且用户主动发起的检查它保证会置前，
     /// 所以这里既不用 `NSAlert`、也不用 `runModalInForeground`。
-    /// This one menu row handles manual checks, available updates and ready-to-restart updates.
-    /// For a prepared update, Sparkle resumes the installer instead of checking the feed.
-    @objc private func checkForUpdates() {
+    /// 只从「安装 vX.Y.Z…」触发：对一版已就绪的更新，`checkForUpdates()` 就是「继续安装」；
+    /// 主动检查的入口在设置窗口（2026-08-24 菜单去重）。
+    @objc private func installPendingUpdate() {
         menu.cancelTrackingWithoutAnimation()
         settingsCoordinator.checkForUpdates()
     }
@@ -820,64 +790,4 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         DispatchQueue.main.async { [onShowSettings] in onShowSettings() }
     }
     @objc private func quit() { onQuit() }
-}
-
-/// Puts a glass icon in front of menu rows and draws it white while its row is highlighted (a
-/// blue icon disappears on the menu's highlight). The icon decides at draw time; the title is
-/// never set again while the menu is up, because re-setting a title on an open menu re-measures
-/// the row a few points wider and the whole menu grows.
-/// Only `willHighlight` and `menuDidClose` are implemented, so as a submenu's delegate it cannot
-/// be mistaken for the main menu opening or closing.
-@MainActor
-final class MenuGlassIconSwapper: NSObject, NSMenuDelegate {
-    private weak var highlightedItem: NSMenuItem?
-
-    /// `false` where the icon cannot be drawn (macOS 12); the item is left untouched.
-    func attach(_ glyph: MenuGlassGlyph, before text: NSAttributedString, isDark: Bool, to item: NSMenuItem) -> Bool {
-        let iconSide: CGFloat = 18
-        func bitmap(onHighlight: Bool) -> NSImage? {
-            MenuGlassIconView(
-                glyph: glyph,
-                size: iconSide,
-                tint: onHighlight ? .white : Color(nsColor: MenuGlassIconView.blue),
-                darkGlass: Color(nsColor: MenuGlassIconView.darkGlassBlue),
-                isDark: isDark,
-                onHighlight: onHighlight
-            ).bitmapImage()
-        }
-        guard let normal = bitmap(onHighlight: false), let highlighted = bitmap(onHighlight: true) else { return false }
-        let icon = NSImage(size: NSSize(width: iconSide, height: iconSide), flipped: false) { [weak self, weak item] rect in
-            let isHighlighted = item != nil && self?.highlightedItem === item
-            (isHighlighted ? highlighted : normal).draw(in: rect)
-            return true
-        }
-        // Drawn afresh every time: the handler is what picks the colour.
-        icon.cacheMode = .never
-        let font = NSFont.menuFont(ofSize: 0)
-        let attachment = NSTextAttachment()
-        attachment.image = icon
-        attachment.bounds = NSRect(x: 0, y: (font.capHeight - iconSide) / 2, width: iconSide, height: iconSide)
-        let title = NSMutableAttributedString(attachment: attachment)
-        title.append(NSAttributedString(string: "  ", attributes: [.font: font]))
-        title.append(text)
-        item.attributedTitle = title
-        return true
-    }
-
-    func removeAll() {
-        highlightedItem = nil
-    }
-
-    /// Called before the menu redraws the rows whose highlight changes.
-    func highlight(_ item: NSMenuItem?) {
-        highlightedItem = item
-    }
-
-    func menu(_ menu: NSMenu, willHighlight item: NSMenuItem?) {
-        highlight(item)
-    }
-
-    func menuDidClose(_ menu: NSMenu) {
-        highlight(nil)
-    }
 }

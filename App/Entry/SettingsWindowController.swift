@@ -121,7 +121,6 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
 
     func windowWillClose(_ notification: Notification) {
         guard let window, notification.object as? NSWindow === window else { return }
-        coordinator.endLayoutEditing()
         closedFrame = window.frame
         diagnosticsSession?.close()
         diagnosticsSession = nil
@@ -134,9 +133,8 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     /// A window losing key keeps its first responder, so a recorder left recording would still
     /// be recording when the user clicks back and swallow the next ⌘W as the new hot key.
     func windowDidResignKey(_ notification: Notification) {
-        guard let window, notification.object as? NSWindow === window else { return }
-        coordinator.endLayoutEditing()
-        guard window.firstResponder is HotKeyRecorderNSView else { return }
+        guard let window, notification.object as? NSWindow === window,
+              window.firstResponder is HotKeyRecorderNSView else { return }
         window.makeFirstResponder(nil)
     }
 
@@ -151,7 +149,6 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     }
 
     private func select(tab: SettingsTab) {
-        coordinator.endLayoutEditing()
         // 点已选中的标签早退，不空放一遍高度动画。
         guard tabState.selected != tab else { return }
         if tab == .diagnostics { diagnosticsSession?.loadIssues() }
