@@ -136,6 +136,11 @@ final class LabelWidthAnimationTests: XCTestCase {
         XCTAssertTrue((0...1).contains(c.c2x))
     }
 
+    /// 自用改版：窗口卡标题区展开 / 收起不超过 0.3s（原 0.60s 显得拖沓）。
+    func testDefaultCurveStaysSnappy() {
+        XCTAssertLessThanOrEqual(LabelWidthAnimation.defaultCurve.duration, 0.3)
+    }
+
     func testParsesTheOverrideString() {
         XCTAssertEqual(LabelWidthAnimation.parse("300, 0.25, 0.1, 0.25, 1"),
                        LabelWidthAnimation.Curve(duration: 0.3, c1x: 0.25, c1y: 0.1, c2x: 0.25, c2y: 1))
