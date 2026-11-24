@@ -964,7 +964,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Modo de tela única"
+            "value": "Tela única"
           }
         },
         "pt-PT": {
@@ -1065,7 +1065,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Modo de várias telas"
+            "value": "Múltiplas telas"
           }
         },
         "pt-PT": {
@@ -1569,7 +1569,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ (sem conexão)"
+            "value": "%@ (desconectado)"
           }
         },
         "pt-PT": {
@@ -1770,7 +1770,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ falhou (código de estado %d)."
+            "value": "%@ falhou (código de status %d)."
           }
         },
         "pt-PT": {
@@ -3479,7 +3479,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Não é possível ler um dos anexos"
+            "value": "Não foi possível ler um anexo"
           }
         },
         "pt-PT": {
@@ -4487,7 +4487,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Limite de anexos de hoje atingido"
+            "value": "Limite diário de anexos atingido"
           }
         },
         "pt-PT": {
@@ -4588,7 +4588,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Anexos grandes demais"
+            "value": "Os anexos são grandes demais"
           }
         },
         "pt-PT": {
@@ -4889,7 +4889,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Relatório de Bug"
+            "value": "Relato de Bug"
           }
         },
         "pt-PT": {
@@ -4989,7 +4989,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Não é possível abrir os ajustes do Dock"
+            "value": "Não foi possível abrir os ajustes do Dock"
           }
         },
         "pt-PT": {
@@ -5090,7 +5090,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Não é possível ler esse arquivo"
+            "value": "Não foi possível ler esse arquivo"
           }
         },
         "pt-PT": {
@@ -6094,7 +6094,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Verifique sua caixa de entrada e clique no link de confirmação para concluir a inscrição. Se ele não estiver lá, verifique a pasta de spam ou a aba Promoções do Gmail."
+            "value": "Verifique sua caixa de entrada e clique no link de confirmação para concluir a inscrição. Se não encontrar a mensagem, verifique a pasta de spam ou a guia Promoções do Gmail."
           }
         },
         "pt-PT": {
@@ -6195,7 +6195,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Verifique sua conexão de rede e tente novamente, ou envie um e-mail para support@tungstenedge.app."
+            "value": "Verifique sua conexão e tente novamente ou escreva para support@tungstenedge.app."
           }
         },
         "pt-PT": {
@@ -6295,7 +6295,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Verifique sua conexão de rede e tente novamente, ou deixe seu endereço em tungstenedge.app."
+            "value": "Verifique sua conexão e tente novamente ou informe seu endereço em tungstenedge.app."
           }
         },
         "pt-PT": {
@@ -6897,7 +6897,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Contato longo demais"
+            "value": "O contato é longo demais"
           }
         },
         "pt-PT": {
@@ -7901,7 +7901,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Não foi possível iniciar uma nova instância do Tungsten Edge: %@\n\nVocê pode clicar em Tentar Novamente, ou encerrar e abri-lo manualmente a partir da pasta Aplicativos."
+            "value": "Não foi possível iniciar uma nova instância do Tungsten Edge: %@\n\nVocê pode selecionar Tentar novamente ou encerrar o aplicativo e abri-lo manualmente pela pasta Aplicativos."
           }
         },
         "pt-PT": {
@@ -8044,6 +8044,107 @@
           "stringUnit": {
             "state": "translated",
             "value": "Không thể cập nhật danh sách Mục đăng nhập."
+          }
+        }
+      }
+    },
+    "Customization": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Customization"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "深度自定"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "深度自訂"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カスタマイズ"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anpassung"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personnalisation"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personalización"
+          }
+        },
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personalización"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personalização"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personalização"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personalizzazione"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "사용자화"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Настройка"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Özelleştirme"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "अनुकूलन"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tùy chỉnh"
           }
         }
       }
@@ -9106,7 +9207,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Os ajustes do Dock não podem ser alterados diretamente a partir de um ambiente com sandbox."
+            "value": "Não é possível alterar os ajustes do Dock diretamente em um ambiente isolado (sandbox)."
           }
         },
         "pt-PT": {
@@ -10965,6 +11066,107 @@
         }
       }
     },
+    "Fixed window label width": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fixed window label width"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "固定窗口标签宽度"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "固定視窗標籤寬度"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ウインドウラベルの幅を固定"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feste Breite für Fenstertitel"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Largeur fixe des titres de fenêtres"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ancho fijo de las etiquetas de ventana"
+          }
+        },
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ancho fijo de las etiquetas de ventana"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Largura fixa dos rótulos de janela"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Largura fixa das etiquetas de janela"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Larghezza fissa delle etichette delle finestre"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "윈도우 레이블 너비 고정"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Фиксированная ширина названий окон"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sabit pencere etiketi genişliği"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "विंडो लेबल की चौड़ाई तय रखें"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cố định độ rộng nhãn cửa sổ"
+          }
+        }
+      }
+    },
     "Flips mouse-wheel scrolling system-wide, like Scroll Reverser. Trackpads and Magic Mouse are not affected. Tungsten Edge only inverts the direction values of scroll-wheel events; nothing is recorded or sent anywhere. If Scroll Reverser or Mos is also running, the two cancel out — keep only one.": {
       "comment": "设置窗口 · 反转滚轮说明（改写输入事件的披露文案）",
       "localizations": {
@@ -11421,7 +11623,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Passe o cursor sobre a borda inferior de uma tela para mudar"
+            "value": "Passe o cursor sobre a borda inferior de uma tela para alternar"
           }
         },
         "pt-PT": {
@@ -12323,7 +12525,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Se o interruptor já estiver ativado e nada acontecer, um registro de permissão deixado por uma versão anterior pode não corresponder mais a esta cópia do Tungsten Edge. Você pode redefini-lo:\n\n1. Primeiro, encerre o Tungsten Edge — enquanto ele estiver em execução, o botão de menos na lista fica acinzentado e a entrada não pode ser removida.\n2. Em Privacidade e Segurança > Acessibilidade, selecione Tungsten Edge na lista e remova-o com o botão de menos. Pode haver mais de uma entrada; remova todas.\n3. Abra o Tungsten Edge novamente a partir da pasta Aplicativos, depois adicione-o e ative o interruptor quando solicitado."
+            "value": "Se o interruptor já estiver ativado e nada acontecer, um registro de permissão de uma versão anterior pode não corresponder a esta cópia do Tungsten Edge. Você pode redefini-lo:\n\n1. Encerre o Tungsten Edge. Enquanto ele estiver em execução, o botão de menos na lista ficará desativado e não será possível remover a entrada.\n2. Em Privacidade e Segurança > Acessibilidade, selecione Tungsten Edge na lista e remova-o pelo botão de menos. Pode haver mais de uma entrada; remova todas.\n3. Abra o Tungsten Edge pela pasta Aplicativos. Adicione-o novamente e ative o interruptor quando solicitado."
           }
         },
         "pt-PT": {
@@ -12524,7 +12726,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Imagem grande demais"
+            "value": "A imagem é grande demais"
           }
         },
         "pt-PT": {
@@ -13028,7 +13230,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ele pode ter sido movido ou apagado. Remova-o e adicione-o novamente."
+            "value": "O arquivo pode ter sido movido ou apagado. Remova-o e anexe-o novamente."
           }
         },
         "pt-PT": {
@@ -13577,6 +13779,207 @@
         }
       }
     },
+    "Keyboard Shortcuts": {
+      "comment": "设置窗口 · 显隐快捷键",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "快捷键"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keyboard Shortcuts"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "快速鍵"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "キーボードショートカット"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tastaturkurzbefehle"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raccourcis clavier"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atajos de teclado"
+          }
+        },
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atajos de teclado"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atalhos de Teclado"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atalhos de teclado"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abbreviazioni da tastiera"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "키보드 단축키"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сочетания клавиш"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klavye Kestirmeleri"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "कीबोर्ड शॉर्टकट"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phím tắt bàn phím"
+          }
+        }
+      }
+    },
+    "Avoid Taskbar": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最大化避让"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avoid Taskbar"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最大化避開"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "タスクバーを避ける"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taskleiste freihalten"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Éviter la barre"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evitar la barra"
+          }
+        },
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evitar la barra"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evitar a barra"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evitar a barra"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evita la barra"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "작업 표시줄 피하기"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не перекрывать панель"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Çubuğu kapatma"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "टास्कबार से बचें"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tránh thanh tác vụ"
+          }
+        }
+      }
+    },
     "Kind": {
       "localizations": {
         "zh-Hans": {
@@ -13932,7 +14335,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deixe seu endereço de e-mail e sua licença será enviada diretamente para você. Ela continua válida se você trocar de dispositivo ou reinstalar o macOS."
+            "value": "Informe seu endereço de e-mail para receber a licença. Ela continuará válida se você trocar de dispositivo ou reinstalar o macOS."
           }
         },
         "pt-PT": {
@@ -14132,7 +14535,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O licenciamento começa com a versão 1.0. Até lá, o Tungsten Edge é totalmente gratuito, e os usuários fundadores que confirmaram o e-mail receberão uma chave de licença gratuita e permanente."
+            "value": "O licenciamento começa na versão 1.0. Até lá, o Tungsten Edge é gratuito. Quem confirmou o e-mail como usuário fundador receberá uma licença permanente e gratuita."
           }
         },
         "pt-PT": {
@@ -14535,7 +14938,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mensagem longa demais"
+            "value": "A mensagem é longa demais"
           }
         },
         "pt-PT": {
@@ -14736,7 +15139,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Minimizar janelas ao ícone do app"
+            "value": "Minimizar janelas no ícone do aplicativo"
           }
         },
         "pt-PT": {
@@ -15038,7 +15441,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mova o Tungsten Edge para Aplicativos"
+            "value": "Mova o Tungsten Edge para a pasta Aplicativos."
           }
         },
         "pt-PT": {
@@ -15783,6 +16186,107 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tên"
+          }
+        }
+      }
+    },
+    "Narrow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Narrow"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "窄"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "窄"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "狭い"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schmal"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Étroit"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estrecho"
+          }
+        },
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estrecho"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estreito"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estreito"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stretto"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "좁게"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Узко"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dar"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "संकीर्ण"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hẹp"
           }
         }
       }
@@ -16642,7 +17146,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Não há nada a fazer aqui — só um instante."
+            "value": "Aguarde alguns instantes. Não há nada a fazer aqui."
           }
         },
         "pt-PT": {
@@ -16943,7 +17447,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Somente seu endereço de e-mail e a data da primeira abertura são enviados, para confirmar você como usuário fundador. Sem e-mails de marketing."
+            "value": "Somente seu endereço de e-mail e a data da primeira abertura são enviados para confirmar sua condição de usuário fundador. Você não receberá e-mails de marketing."
           }
         },
         "pt-PT": {
@@ -17244,7 +17748,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abrir Pasta Aplicativos"
+            "value": "Abrir a Pasta Aplicativos"
           }
         },
         "pt-PT": {
@@ -17645,7 +18149,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abra os Ajustes do Sistema e vá para Mesa e Dock (no macOS 12, Dock e Barra de Menus)."
+            "value": "Abra os Ajustes do Sistema e acesse Mesa e Dock (no macOS 12, Dock e Barra de Menus)."
           }
         },
         "pt-PT": {
@@ -18448,7 +18952,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Option sozinha ou Option-Shift não é confiável no macOS 15."
+            "value": "No macOS 15, Option sozinha ou combinada com Shift pode não funcionar de forma confiável."
           }
         },
         "pt-PT": {
@@ -19450,7 +19954,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Antecipar transições de tela cheia para evitar cintilação da barra de tarefas"
+            "value": "Antecipar transições para tela cheia para evitar que a Barra de Tarefas pisque"
           }
         },
         "pt-PT": {
@@ -19652,7 +20156,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pressione ⌥⌘D a qualquer momento — é o atalho do próprio macOS para mostrar e ocultar o Dock. Você também pode alterar depois como o Dock é mostrado, no item do Tungsten Edge na barra de menus."
+            "value": "Pressione ⌥⌘D a qualquer momento para mostrar ou ocultar o Dock. Esse é o atalho padrão do macOS para essa função. Você também pode alterar essa configuração posteriormente pelo menu do Tungsten Edge na barra de menus."
           }
         },
         "pt-PT": {
@@ -19953,7 +20457,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Devolvendo ao lugar original as janelas que foram movidas."
+            "value": "Restaurando as janelas às posições originais."
           }
         },
         "pt-PT": {
@@ -20354,7 +20858,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Encontrou um problema ou teve uma ideia? Escreva para nós aqui."
+            "value": "Encontrou um problema ou teve uma ideia? Escreva para nós por aqui."
           }
         },
         "pt-PT": {
@@ -21306,6 +21810,107 @@
         }
       }
     },
+    "Reset": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复默认"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回復預設"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "デフォルトに戻す"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zurücksetzen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réinitialiser"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restablecer"
+          }
+        },
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restablecer"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redefinir"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repor"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ripristina"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "재설정"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сбросить"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sıfırla"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "रीसेट करें"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đặt lại"
+          }
+        }
+      }
+    },
     "Reset to Default": {
       "comment": "设置窗口 · 显隐快捷键",
       "localizations": {
@@ -21861,7 +22466,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Restaurando janelas…"
+            "value": "Restaurando as janelas…"
           }
         },
         "pt-PT": {
@@ -23717,6 +24322,106 @@
         }
       }
     },
+    "Name on Hover": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "悬停名称"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name on Hover"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "停留顯示名稱"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリ名を表示"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name beim Zeigen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom au survol"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nombre al pasar"
+          }
+        },
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nombre al pasar"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nome ao passar"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nome ao pousar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nome al passaggio"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱 이름 보기"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Имя при наведении"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Üzerine gelince ad"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "नाम दिखाएँ"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tên khi di chuột"
+          }
+        }
+      }
+    },
     "Show in Finder": {
       "localizations": {
         "zh-Hans": {
@@ -23871,7 +24576,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Modo de Tela Única ou Várias Telas"
+            "value": "Modo de Tela Única ou Múltiplas Telas"
           }
         },
         "pt-PT": {
@@ -23918,103 +24623,103 @@
         }
       }
     },
-    "Show/hide taskbar shortcut": {
+    "Show/hide taskbar": {
       "comment": "设置窗口 · 显隐快捷键",
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "显隐 Dock 栏快捷键"
+            "value": "显隐 Dock 栏"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Show/hide taskbar shortcut"
+            "value": "Show/hide taskbar"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "工作列顯示／隱藏快速鍵"
+            "value": "顯示／隱藏工作列"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "タスクバーの表示/非表示ショートカット"
+            "value": "タスクバーの表示/非表示"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kurzbefehl zum Ein- und Ausblenden der Taskleiste"
+            "value": "Taskleiste ein-/ausblenden"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Raccourci afficher/masquer la barre des tâches"
+            "value": "Afficher/masquer la barre des tâches"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Atajo para mostrar u ocultar la barra de tareas"
+            "value": "Mostrar u ocultar la barra de tareas"
           }
         },
         "es-419": {
           "stringUnit": {
             "state": "translated",
-            "value": "Atajo para mostrar u ocultar la barra de tareas"
+            "value": "Mostrar u ocultar la barra de tareas"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Atalho para mostrar/ocultar a barra de tarefas"
+            "value": "Atalho para mostrar ou ocultar a Barra de Tarefas"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Atalho para mostrar/ocultar a barra de tarefas"
+            "value": "Mostrar/ocultar a barra de tarefas"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Scorciatoia mostra/nascondi barra"
+            "value": "Mostra/nascondi barra"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "작업 표시줄 보기/가리기 단축키"
+            "value": "작업 표시줄 보기/가리기"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Сочетание клавиш для показа/скрытия панели задач"
+            "value": "Показать/скрыть панель задач"
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Görev çubuğunu gösterme/gizleme kestirmesi"
+            "value": "Görev çubuğunu göster/gizle"
           }
         },
         "hi": {
           "stringUnit": {
             "state": "translated",
-            "value": "टास्कबार दिखाने/छिपाने का शॉर्टकट"
+            "value": "टास्कबार दिखाएँ/छिपाएँ"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Phím tắt hiển thị/ẩn thanh tác vụ"
+            "value": "Hiển thị/ẩn thanh tác vụ"
           }
         }
       }
@@ -24173,7 +24878,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Não é possível acessar alguns itens. Permita que o Tungsten Edge acesse a pasta deles nos ajustes de privacidade do seu Mac."
+            "value": "Não é possível acessar alguns itens. Permita que o Tungsten Edge acesse a pasta onde eles estão nos ajustes de privacidade do Mac."
           }
         },
         "pt-PT": {
@@ -24474,7 +25179,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dê uma estrela ao Tungsten Edge no GitHub — um jeito gratuito de ajudar a melhorá-lo."
+            "value": "Dê uma estrela ao Tungsten Edge no GitHub. É uma forma gratuita de ajudar a melhorar o aplicativo."
           }
         },
         "pt-PT": {
@@ -25581,7 +26286,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Obrigado — lemos todas as mensagens."
+            "value": "Agradecemos — lemos todas as mensagens."
           }
         },
         "pt-PT": {
@@ -25681,7 +26386,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O Dock (⌥⌘D para mostrar/ocultar)"
+            "value": "O Dock (⌥⌘D para mostrar ou ocultar)"
           }
         },
         "pt-PT": {
@@ -26386,7 +27091,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O serviço de feedback está temporariamente indisponível. Tente novamente mais tarde ou envie um e-mail para support@tungstenedge.app."
+            "value": "O serviço de feedback está temporariamente indisponível. Tente novamente mais tarde ou escreva para support@tungstenedge.app."
           }
         },
         "pt-PT": {
@@ -26588,7 +27293,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "A mudança de idioma tem efeito depois que o Tungsten Edge for reiniciado."
+            "value": "A alteração de idioma entrará em vigor quando o Tungsten Edge for reiniciado."
           }
         },
         "pt-PT": {
@@ -26689,7 +27394,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "A tela vai piscar uma vez ao aplicar isto."
+            "value": "A tela piscará uma vez quando você aplicar esta configuração."
           }
         },
         "pt-PT": {
@@ -26889,7 +27594,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O servidor de inscrição retornou o código de estado %d."
+            "value": "O servidor de inscrição retornou o código de status %d."
           }
         },
         "pt-PT": {
@@ -27089,7 +27794,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este endereço já está na lista. Sua licença será enviada diretamente para ele."
+            "value": "Este endereço já está cadastrado. Enviaremos a licença diretamente para ele."
           }
         },
         "pt-PT": {
@@ -27290,7 +27995,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esta cópia está sendo executada a partir de um local temporário ou somente leitura."
+            "value": "Esta cópia está sendo executada de um local temporário ou somente leitura."
           }
         },
         "pt-PT": {
@@ -27391,7 +28096,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esta tecla não pode ser usada como tecla do atalho."
+            "value": "Esta tecla não pode ser usada como atalho."
           }
         },
         "pt-PT": {
@@ -27491,7 +28196,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esta chave de licença não é válida. Copie a chave inteira do seu e-mail e cole-a novamente."
+            "value": "Esta chave de licença é inválida. Copie-a inteira do e-mail e cole-a novamente."
           }
         },
         "pt-PT": {
@@ -27591,7 +28296,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Isso levará apenas um instante."
+            "value": "Isso levará alguns instantes."
           }
         },
         "pt-PT": {
@@ -27691,7 +28396,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tempo esgotado durante a leitura"
+            "value": "A leitura excedeu o tempo limite"
           }
         },
         "pt-PT": {
@@ -27792,7 +28497,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Para que a barra de tarefas não pisque ao entrar em tela cheia, o Tungsten Edge precisa ocultá-la antes que sua ação chegue ao app. Por isso, ele monitora em todo o sistema os cliques com o botão esquerdo, as teclas pressionadas e os gestos do trackpad, e reconhece apenas quatro deles: o botão verde da janela, Control-Command-F, Control-seta para a esquerda/direita e o gesto de passar três dedos na horizontal. O que você digita nunca é gravado, registrado nem enviado para lugar nenhum. Desativar esta opção desliga completamente esse monitoramento."
+            "value": "Para evitar que a barra de tarefas pisque quando você muda para tela cheia, o Tungsten Edge precisa ocultá-la antes que sua ação chegue ao aplicativo. Por isso, monitora cliques com o botão esquerdo, teclas pressionadas e gestos do trackpad em todo o sistema, mas reconhece apenas quatro ações: o botão verde da janela, Control-Command-F, Control-Seta para a esquerda/direita e o gesto horizontal de três dedos. O que você digita nunca é gravado, registrado nem enviado. Ao desativar esta opção, o monitoramento é interrompido por completo."
           }
         },
         "pt-PT": {
@@ -27893,7 +28598,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "A cota de anexos de hoje foi atingida. Remova os anexos para enviar só o texto, tente novamente amanhã ou envie um e-mail para support@tungstenedge.app."
+            "value": "O limite diário de anexos foi atingido. Remova-os para enviar somente o texto, tente novamente amanhã ou escreva para support@tungstenedge.app."
           }
         },
         "pt-PT": {
@@ -28297,7 +29002,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tungsten Edge (%@ para mostrar/ocultar)"
+            "value": "Tungsten Edge (%@ para mostrar ou ocultar)"
           }
         },
         "pt-PT": {
@@ -28397,7 +29102,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O Tungsten Edge ainda está em execução. Você pode tentar novamente."
+            "value": "O Tungsten Edge ainda está em execução. Tente novamente."
           }
         },
         "pt-PT": {
@@ -28498,7 +29203,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O Tungsten Edge acabou de perder a permissão de Acessibilidade, então a barra de tarefas foi recolhida. Ative o Tungsten Edge novamente em %@."
+            "value": "O Tungsten Edge perdeu a permissão de acessibilidade e, por isso, a barra de tarefas foi ocultada. Ative novamente a permissão do Tungsten Edge em %@."
           }
         },
         "pt-PT": {
@@ -28899,7 +29604,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O Tungsten Edge será reiniciado sozinho assim que você conceder a permissão novamente."
+            "value": "O Tungsten Edge será reiniciado automaticamente assim que você conceder a permissão novamente."
           }
         },
         "pt-PT": {
@@ -29201,7 +29906,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ative o Tungsten Edge em %@. Esta janela se fecha sozinha quando você fizer isso, e a barra de tarefas termina de iniciar."
+            "value": "Ative o Tungsten Edge em %@. Esta janela será fechada automaticamente quando você fizer isso, e a barra de tarefas terminará de carregar."
           }
         },
         "pt-PT": {
@@ -29403,7 +30108,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Use pelo menos uma das teclas Command, Control ou Option."
+            "value": "Use pelo menos uma destas teclas: Command, Control ou Option."
           }
         },
         "pt-PT": {
@@ -29906,7 +30611,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vídeo grande demais"
+            "value": "O vídeo é grande demais"
           }
         },
         "pt-PT": {
@@ -30106,7 +30811,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Quer o Dock de volta?"
+            "value": "Quer restaurar o Dock?"
           }
         },
         "pt-PT": {
@@ -30308,7 +31013,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O que o Tungsten Edge deveria adicionar ou melhorar? Conte como você o usaria."
+            "value": "O que o Tungsten Edge poderia adicionar ou melhorar? Conte como você usaria esse recurso."
           }
         },
         "pt-PT": {
@@ -30409,7 +31114,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O que deu errado? O que você estava fazendo quando aconteceu? Cole aqui qualquer detalhe que possa ajudar."
+            "value": "O que aconteceu? O que você estava fazendo nesse momento? Inclua detalhes que possam ajudar."
           }
         },
         "pt-PT": {
@@ -30452,6 +31157,208 @@
           "stringUnit": {
             "state": "translated",
             "value": "Đã xảy ra lỗi gì? Bạn đã làm gì khi sự cố xảy ra? Hãy dán mọi chi tiết có thể hữu ích."
+          }
+        }
+      }
+    },
+    "Wide": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wide"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "宽"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "寬"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "広い"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Breit"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Large"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ancho"
+          }
+        },
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ancho"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Largo"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Largo"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Largo"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "넓게"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Широко"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geniş"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "चौड़ा"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rộng"
+          }
+        }
+      }
+    },
+    "Window label width": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Window label width"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "窗口标签宽度"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "視窗標籤寬度"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ウインドウラベルの幅"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Breite der Fenstertitel"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Largeur des titres de fenêtres"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ancho de las etiquetas de ventana"
+          }
+        },
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ancho de las etiquetas de ventana"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Largura dos rótulos de janela"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Largura das etiquetas de janela"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Larghezza delle etichette delle finestre"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "윈도우 레이블 너비"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ширина названий окон"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pencere etiketi genişliği"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "विंडो लेबल की चौड़ाई"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Độ rộng nhãn cửa sổ"
           }
         }
       }
@@ -30510,7 +31417,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Escreva algo primeiro."
+            "value": "Escreva uma mensagem para continuar."
           }
         },
         "pt-PT": {
@@ -30611,7 +31518,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Você pode anexar até 3 arquivos. Remova um primeiro."
+            "value": "Você pode anexar até 3 arquivos. Remova um deles para continuar."
           }
         },
         "pt-PT": {
@@ -30813,7 +31720,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sua mensagem ou seus anexos não foram aceitos. Tente encurtar a mensagem ou usar outro arquivo, ou envie um e-mail para support@tungstenedge.app."
+            "value": "O servidor não aceitou sua mensagem ou os anexos. Tente encurtar a mensagem, usar outro arquivo ou escrever para support@tungstenedge.app."
           }
         },
         "pt-PT": {
@@ -31013,7 +31920,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Inscrição concluída. Quando o licenciamento começar, sua licença chegará direto à sua caixa de entrada."
+            "value": "Sua inscrição foi registrada. Quando o licenciamento começar, enviaremos sua licença diretamente para sua caixa de entrada."
           }
         },
         "pt-PT": {
@@ -31114,7 +32021,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Você enviou mensagens demais em pouco tempo. Tente novamente daqui a pouco — sua mensagem e seus anexos continuam aqui."
+            "value": "Você enviou muitas mensagens em pouco tempo. Tente novamente daqui a alguns instantes. Sua mensagem e seus anexos continuam aqui."
           }
         },
         "pt-PT": {
@@ -31214,7 +32121,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O macOS associa a permissão de Acessibilidade a uma cópia específica de um app. Esta cópia está em execução a partir de um local temporário ou somente leitura, portanto ativar o interruptor não terá efeito — e o registro da permissão continua nos Ajustes do Sistema depois que a imagem de disco é ejetada. Arraste o Tungsten Edge para a pasta Aplicativos e abra-o de lá."
+            "value": "O macOS associa a permissão de Acessibilidade a uma cópia específica do aplicativo. Esta cópia está sendo executada de um local temporário ou somente leitura; por isso, ativar o interruptor não terá efeito, e o registro da permissão continuará nos Ajustes do Sistema após ejetar a imagem de disco. Arraste o Tungsten Edge para a pasta Aplicativos e abra-o de lá."
           }
         },
         "pt-PT": {
@@ -31315,7 +32222,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "you@example.com"
+            "value": "seu@email.com"
           }
         },
         "pt-PT": {
